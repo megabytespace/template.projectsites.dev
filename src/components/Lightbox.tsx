@@ -1,166 +1,22 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import YARL, { type SlideImage } from 'yet-another-react-lightbox';
-import Captions from 'yet-another-react-lightbox/plugins/captions';
-import Counter from 'yet-another-react-lightbox/plugins/counter';
-import Download from 'yet-another-react-lightbox/plugins/download';
-import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
-import Slideshow from 'yet-another-react-lightbox/plugins/slideshow';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import { useEffect } from 'react';
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import PhotoSwipe from 'photoswipe';
+import 'photoswipe/style.css';
 
-import 'yet-another-react-lightbox/styles.css';
-import 'yet-another-react-lightbox/plugins/captions.css';
-import 'yet-another-react-lightbox/plugins/counter.css';
-import 'yet-another-react-lightbox/plugins/thumbnails.css';
-
-/* -------------------------------------------------------------------------- */
-/*  Eligibility classifier (shared between programmatic + DOM-event modes)    */
-/* -------------------------------------------------------------------------- */
-
-export interface LightboxImage {
+interface SlideData {
   src: string;
-  alt?: string;
-  /** `logo` images are excluded from lightboxes regardless of dimensions. */
-  kind?: 'logo' | 'photo' | string;
-  width?: number;
-  height?: number;
-  /** Subjective quality rating 0–10 from inspection pipeline. */
-  quality?: number;
+  width: number;
+  height: number;
+  alt: string;
+  msrc?: string;
 }
 
-const MIN_W = 1024;
-const MIN_H = 768;
-const MIN_QUALITY = 7;
-
-/**
- * Returns `true` when an image meets the lightbox eligibility floor:
- * not a logo, dims ≥ 1024×768, quality ≥ 7.
- */
-export function inferLightboxEligibility(image: LightboxImage): boolean {
-  if (image.kind === 'logo') return false;
-  if (typeof image.width === 'number' && typeof image.height === 'number') {
-    if (image.width < MIN_W || image.height < MIN_H) return false;
-  }
-  if (typeof image.quality === 'number' && image.quality < MIN_QUALITY) return false;
-  return true;
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Programmatic gallery component (preferred for new generation)             */
-/* -------------------------------------------------------------------------- */
-
-interface GalleryProps {
-  images: LightboxImage[];
-  className?: string;
-  imageClassName?: string;
-  /** Render each non-eligible image as static (no zoom). Default: true. */
-  filterIneligible?: boolean;
-}
-
-/**
- * Renders an image strip; eligible images become a synced lightbox group,
- * non-eligible images render as static `<img>` (no zoom handler attached).
- */
-export function LightboxGallery({
-  images,
-  className,
-  imageClassName,
-  filterIneligible = true,
-}: GalleryProps) {
-  const eligible = useMemo(
-    () => (filterIneligible ? images.filter(inferLightboxEligibility) : images),
-    [images, filterIneligible],
-  );
-  const slides = useMemo<SlideImage[]>(
-    () => eligible.map((i) => ({ src: i.src, alt: i.alt ?? '', description: i.alt })),
-    [eligible],
-  );
-  const [open, setOpen] = useState(false);
-  const [index, setIndex] = useState(0);
-  const close = useCallback(() => setOpen(false), []);
-
-  const eligibleSrcs = useMemo(() => new Set(eligible.map((e) => e.src)), [eligible]);
-
-  return (
-    <>
-      <div className={`grid gap-4 ${className ?? ''}`.trim()}>
-        {images.map((img, i) => {
-          const isEligible = eligibleSrcs.has(img.src);
-          const slideIndex = eligible.findIndex((e) => e.src === img.src);
-          if (isEligible) {
-            return (
-              <button
-                key={img.src + i}
-                type="button"
-                aria-label={`Open ${img.alt ?? 'image'} in lightbox`}
-                onClick={() => {
-                  setIndex(Math.max(0, slideIndex));
-                  setOpen(true);
-                }}
-                className="group block w-full overflow-hidden rounded-lg interactive-4"
-                style={{ cursor: 'zoom-in' }}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt ?? ''}
-                  width={img.width}
-                  height={img.height}
-                  loading="lazy"
-                  className={`h-auto w-full transition-transform duration-500 group-hover:scale-105 ${imageClassName ?? ''}`.trim()}
-                  data-zoomable="true"
-                />
-              </button>
-            );
-          }
-          return (
-            <img
-              key={img.src + i}
-              src={img.src}
-              alt={img.alt ?? ''}
-              width={img.width}
-              height={img.height}
-              loading="lazy"
-              className={`h-auto w-full ${imageClassName ?? ''}`.trim()}
-              data-no-zoom="true"
-            />
-          );
-        })}
-      </div>
-      <YARL
-        open={open}
-        close={close}
-        slides={slides}
-        index={index}
-        on={{ view: ({ index: i }) => setIndex(i) }}
-        plugins={[Captions, Counter, Download, Fullscreen, Slideshow, Thumbnails, Zoom]}
-        captions={{ descriptionTextAlign: 'center', showToggle: false }}
-        counter={{ container: { style: { top: 'unset', bottom: 0 } } }}
-        thumbnails={{ position: 'bottom', width: 96, height: 64, border: 0, gap: 8 }}
-        zoom={{ maxZoomPixelRatio: 3, scrollToZoom: true }}
-        slideshow={{ delay: 4000 }}
-        animation={{ fade: 300, swipe: 250 }}
-        portal={{ root: typeof document !== 'undefined' ? document.body : undefined }}
-        controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
-        carousel={{ finite: false, preload: 2, padding: '16px', spacing: '24px' }}
-        styles={{ root: { '--yarl__color_backdrop': 'rgba(8, 0, 12, 0.94)' } }}
-      />
-    </>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Legacy DOM-event lightbox (auto-detects all eligible <img> on the page)   */
-/* -------------------------------------------------------------------------- */
-
-function isDomEligible(img: HTMLImageElement): boolean {
-  if (img.closest('header, footer, a, [data-no-zoom], button')) return false;
-  if (img.dataset.kind === 'logo') return false;
-  const w = img.naturalWidth || img.width;
-  const h = img.naturalHeight || img.height;
-  if (w < MIN_W || h < MIN_H) return false;
-  const quality = img.dataset.quality ? Number(img.dataset.quality) : undefined;
-  if (typeof quality === 'number' && quality < MIN_QUALITY) return false;
-  return true;
+function isEligible(img: HTMLImageElement): boolean {
+  if (img.closest('header, footer, [data-no-zoom], button')) return false;
+  if (img.dataset.lightbox || img.dataset.gallery || img.closest('[data-lightbox],[data-gallery]')) return true;
+  const w = img.naturalWidth || img.offsetWidth || img.width;
+  const h = img.naturalHeight || img.offsetHeight || img.height;
+  return w >= 80 && h >= 80;
 }
 
 function findGallery(img: HTMLImageElement): HTMLImageElement[] {
@@ -169,89 +25,142 @@ function findGallery(img: HTMLImageElement): HTMLImageElement[] {
     const id = (explicit as HTMLElement).dataset.gallery;
     const scope = document.querySelectorAll<HTMLElement>(`[data-gallery="${id}"]`);
     const imgs: HTMLImageElement[] = [];
-    scope.forEach((el) =>
-      el.querySelectorAll<HTMLImageElement>('img').forEach((i) => isDomEligible(i) && imgs.push(i)),
-    );
+    scope.forEach((el) => el.querySelectorAll<HTMLImageElement>('img').forEach((i) => isEligible(i) && imgs.push(i)));
     if (imgs.length) return imgs;
   }
   let node: HTMLElement | null = img.parentElement;
   while (node) {
-    const candidates = Array.from(node.querySelectorAll<HTMLImageElement>('img')).filter(isDomEligible);
+    const candidates = Array.from(node.querySelectorAll<HTMLImageElement>('img')).filter(isEligible);
     if (candidates.length >= 2) return candidates;
     node = node.parentElement;
   }
   return [img];
 }
 
-function toSlide(img: HTMLImageElement): SlideImage & { description?: string } {
+async function probeDimensions(src: string): Promise<{ w: number; h: number }> {
+  return new Promise((resolve) => {
+    const probe = new Image();
+    probe.onload = () => resolve({ w: probe.naturalWidth || 1600, h: probe.naturalHeight || 1200 });
+    probe.onerror = () => resolve({ w: 1600, h: 1200 });
+    probe.src = src;
+  });
+}
+
+function toSlide(img: HTMLImageElement): SlideData {
   const src = img.currentSrc || img.src;
-  return { src, alt: img.alt || '', description: img.alt || undefined };
+  const w = img.naturalWidth || img.dataset.pswpWidth ? Number(img.dataset.pswpWidth) : 0;
+  const h = img.naturalHeight || img.dataset.pswpHeight ? Number(img.dataset.pswpHeight) : 0;
+  return {
+    src,
+    width: w || 1600,
+    height: h || 1200,
+    alt: img.alt || '',
+    msrc: src,
+  };
 }
 
 export function Lightbox() {
-  const [slides, setSlides] = useState<(SlideImage & { description?: string })[]>([]);
-  const [index, setIndex] = useState(0);
-  const [open, setOpen] = useState(false);
-
-  const close = useCallback(() => setOpen(false), []);
-
   useEffect(() => {
-    function onClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      if (!(target instanceof HTMLImageElement)) return;
-      if (!isDomEligible(target)) return;
+    let pswp: PhotoSwipeLightbox | null = null;
 
-      e.preventDefault();
+    async function open(target: HTMLImageElement) {
       const siblings = findGallery(target);
+      const dataSource: SlideData[] = await Promise.all(
+        siblings.map(async (img) => {
+          const slide = toSlide(img);
+          if (img.naturalWidth && img.naturalHeight) {
+            slide.width = img.naturalWidth;
+            slide.height = img.naturalHeight;
+          } else {
+            const dims = await probeDimensions(slide.src);
+            slide.width = dims.w;
+            slide.height = dims.h;
+          }
+          return slide;
+        }),
+      );
       const startIndex = Math.max(
         0,
         siblings.findIndex((s) => (s.currentSrc || s.src) === (target.currentSrc || target.src)),
       );
-      setSlides(siblings.map(toSlide));
-      setIndex(startIndex);
-      setOpen(true);
-    }
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, []);
 
-  useEffect(() => {
+      pswp = new PhotoSwipeLightbox({
+        dataSource,
+        pswpModule: PhotoSwipe,
+        bgOpacity: 0.94,
+        showHideAnimationType: 'fade',
+        zoom: true,
+        wheelToZoom: true,
+        loop: true,
+        padding: { top: 40, bottom: 40, left: 16, right: 16 },
+      });
+
+      pswp.on('uiRegister', () => {
+        pswp?.pswp?.ui?.registerElement({
+          name: 'caption',
+          order: 9,
+          isButton: false,
+          appendTo: 'root',
+          html: '',
+          onInit: (el) => {
+            el.classList.add('pswp__caption');
+            pswp?.pswp?.on('change', () => {
+              const slide = pswp?.pswp?.currSlide?.data as SlideData | undefined;
+              el.innerText = slide?.alt || '';
+            });
+          },
+        });
+      });
+
+      pswp.on('close', () => {
+        pswp?.destroy();
+        pswp = null;
+      });
+
+      pswp.init();
+      pswp.loadAndOpen(startIndex);
+    }
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!(target instanceof HTMLImageElement)) return;
+      if (!isEligible(target)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      void open(target);
+    }
+
+    document.addEventListener('click', onClick, true);
+
     function markZoomable() {
       const imgs = document.querySelectorAll<HTMLImageElement>('main img');
       imgs.forEach((img) => {
-        if (img.closest('a, [data-no-zoom], button')) return;
-        if (img.dataset.kind === 'logo') return;
-        const w = img.naturalWidth || img.width;
-        const h = img.naturalHeight || img.height;
-        if (w < MIN_W || h < MIN_H) return;
+        if (img.closest('[data-no-zoom], button')) return;
         if (img.dataset.zoomable === 'true') return;
+        const explicit =
+          img.dataset.lightbox || img.dataset.gallery || img.closest('[data-lightbox],[data-gallery]');
+        if (explicit) {
+          img.dataset.zoomable = 'true';
+          img.style.cursor = 'zoom-in';
+          return;
+        }
+        const w = img.naturalWidth || img.offsetWidth || img.width;
+        const h = img.naturalHeight || img.offsetHeight || img.height;
+        if (w < 80 || h < 80) return;
         img.dataset.zoomable = 'true';
         img.style.cursor = 'zoom-in';
       });
     }
     markZoomable();
     const interval = window.setInterval(markZoomable, 1500);
-    return () => window.clearInterval(interval);
+
+    return () => {
+      document.removeEventListener('click', onClick, true);
+      window.clearInterval(interval);
+      pswp?.destroy();
+      pswp = null;
+    };
   }, []);
 
-  return (
-    <YARL
-      open={open}
-      close={close}
-      slides={slides}
-      index={index}
-      on={{ view: ({ index: i }) => setIndex(i) }}
-      plugins={[Captions, Counter, Download, Fullscreen, Slideshow, Thumbnails, Zoom]}
-      captions={{ descriptionTextAlign: 'center', showToggle: false }}
-      counter={{ container: { style: { top: 'unset', bottom: 0 } } }}
-      thumbnails={{ position: 'bottom', width: 96, height: 64, border: 0, gap: 8 }}
-      zoom={{ maxZoomPixelRatio: 3, scrollToZoom: true }}
-      slideshow={{ delay: 4000 }}
-      animation={{ fade: 300, swipe: 250 }}
-      portal={{ root: typeof document !== 'undefined' ? document.body : undefined }}
-      controller={{ closeOnBackdropClick: true, closeOnPullDown: true }}
-      carousel={{ finite: false, preload: 2, padding: '16px', spacing: '24px' }}
-      styles={{ root: { '--yarl__color_backdrop': 'rgba(8, 0, 12, 0.94)' } }}
-    />
-  );
+  return null;
 }
