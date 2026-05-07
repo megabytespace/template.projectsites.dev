@@ -1,6 +1,8 @@
 import Header from './Header';
 import Footer from './Footer';
 import { Lightbox } from './Lightbox';
+import SkipLink from './SkipLink';
+import BackToTop from './BackToTop';
 
 interface Props {
   children: React.ReactNode;
@@ -9,9 +11,13 @@ interface Props {
 export default function Layout({ children }: Props) {
   return (
     <>
+      <SkipLink />
       <Header />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <Footer />
+      <BackToTop />
       <Lightbox />
     </>
   );

@@ -4,6 +4,7 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { JsonLd } from '@/components/JsonLd';
 import { useSEO } from '@/hooks/useSEO';
 import { Button } from '@/components/ui/button';
+import { buildBusinessJsonLd, type BusinessClass } from '@/lib/businessSchema';
 
 const features = [
   {
@@ -74,13 +75,12 @@ export default function Home() {
   return (
     <>
       <JsonLd
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'LocalBusiness',
+        data={buildBusinessJsonLd({
           name: '{BUSINESS_NAME}',
           description: '{BUSINESS_DESCRIPTION}',
           url: '{BUSINESS_URL}',
-        }}
+          businessClass: '{BUSINESS_CLASS}' as BusinessClass,
+        })}
       />
 
       {/* Hero */}
@@ -320,7 +320,7 @@ export default function Home() {
                     ))}
                   </div>
                   <p className="text-white/60 text-sm leading-relaxed mb-6 flex-1 italic">
-                    &ldquo;{t.quote}&rdquo;
+                    “{t.quote}”
                   </p>
                   <div>
                     <p className="text-white font-medium text-sm">{t.name}</p>
