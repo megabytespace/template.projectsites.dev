@@ -2,7 +2,67 @@
 
 All notable changes to `projectsites-template` are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org).
 
-## [Unreleased]
+## [3.1.0] — 2026-05-20
+
+Validation, testing, CI, six new section components, scoped agent contracts.
+
+### Added
+
+#### Safety + validation
+- `src/brandSchema.ts` — Zod-based schema for `_brand.json` + soft-warning linter
+- `scripts/validate-brand.mjs` — CLI: `npm run validate:brand`. Validates schema + surfaces placeholder/range/format warnings.
+- `scripts/swap-brand.mjs` — CLI: `npm run brand:swap [name]`. Backs up + swaps `_brand.json` with any `examples/` preset.
+
+#### Testing
+- `vitest.config.ts` + `tests/setup.ts` — jsdom + Testing Library setup
+- `tests/unit/brand.test.ts` — 13 tests covering alias resolution, `applyBrand` side effects, `featureOn`
+- `tests/unit/brandSchema.test.ts` — 10 tests covering all 9 presets pass schema + soft warnings
+- `tests/unit/businessSchema.test.ts` — 19 tests for JSON-LD graph builder
+- `playwright.config.ts` + 3 E2E specs — homepage, Cmd+K palette, theme toggle (Chromium + mobile Chrome)
+
+#### CI
+- `.github/workflows/ci.yml` — 5 parallel jobs: validate (brand + all 9 presets), typecheck, vitest, build, Playwright E2E. Bundle-size artifact uploaded.
+
+#### Components
+- `src/components/Image.tsx` — universal `<Image>` with AVIF/WebP/JPEG fallback, `priority` prop for LCP, aspect-ratio CLS prevention, srcset support
+- `src/components/ErrorBoundary.tsx` — graceful render-error fallback with retry + dev stack trace, prod analytics breadcrumb (gtag + posthog)
+- `src/components/DevA11yBadge.tsx` — dev-only floating chip showing real-time axe-core violation count (zero prod bundle impact)
+
+#### Section components (6 new in `src/components/sections/`)
+- `Newsletter.tsx` — promoted from `/components/`. Inline + bar variants, lead-magnet badge, double-opt-in friendly
+- `Timeline.tsx` — promoted from `/components/`. Vertical + horizontal orientations; image support flagged for primary-source compliance per always.md
+- `Tabs.tsx` — accessible WAI-ARIA tab pattern with arrow/Home/End keyboard nav. Inline state (no Radix dep)
+- `CodeBlock.tsx` — code snippet with copy button, filename header, line-number gutter, line-highlight. No syntax-highlighting lib by design (lean bundle)
+- `VideoEmbed.tsx` — privacy-first lazy embed for YouTube/Vimeo/Loom/MP4. Poster-first; iframe loads on click. youtube-nocookie.com default.
+- `AnnouncementBanner.tsx` — dismissible top-of-page bar with `localStorage` persistence per `id`. Five tones (accent/success/warning/danger/info).
+
+#### Scoped AGENTS.md files
+- `src/components/sections/AGENTS.md` — component conventions + section-vs-section decision tree
+- `src/pages/AGENTS.md` — page skeleton + 5-step new-page checklist
+- `src/components/local/AGENTS.md` — local-business component rules + LocalBusiness JSON-LD requirements
+- `scripts/AGENTS.md` — script-author conventions (exit codes, ANSI, idempotency)
+- `tests/AGENTS.md` — Vitest + Playwright conventions
+- `examples/AGENTS.md` — preset-author conventions
+- `docs/AGENTS.md` — doc style guide + decision-tree pattern
+
+#### Tooling
+- `scripts/og-image.mjs` — generate `public/og-image.svg` from `_brand.json` (branded 1200×630 with brand color + headline + grid + accent border). Optional PNG via `--png` (requires sharp).
+- `src/vite-env.d.ts` — Vite env type augmentation for `import.meta.env.DEV`
+
+### Changed
+- `package.json` → v3.1.0. Adds zod, vitest, @vitest/ui, @vitest/coverage-v8, @playwright/test, @axe-core/playwright, @testing-library/react, @testing-library/jest-dom, jsdom. New npm scripts: `test`, `test:watch`, `test:ui`, `test:coverage`, `e2e`, `e2e:prod`, `e2e:ui`, `e2e:install`, `validate:brand`, `brand:swap`, `og`.
+- `src/main.tsx` — wraps app in `<ErrorBoundary>`
+- `src/components/Layout.tsx` — mounts `<DevA11yBadge>` (dev-only)
+- `public/og-image.svg` — generated from default `_brand.json`
+
+### Build verification
+- npm run typecheck: 0 errors
+- npm run build: 363KB JS (107KB gzip), 129KB CSS (17KB gzip), 1587 modules
+- npm test: 42 tests pass across 3 files
+- npm run validate:brand: schema valid (10 placeholder warnings — expected on template default)
+- npm run dev: HTTP 200 + all meta intact
+
+## [3.0.1] — 2026-05-20
 
 Documentation pass.
 

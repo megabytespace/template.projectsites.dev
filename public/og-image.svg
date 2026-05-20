@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="oklch(0.08 0.02 240)" />
+      <stop offset="100%" stop-color="oklch(0.62 0.18 240)" stop-opacity="0.15" />
+    </linearGradient>
+    <radialGradient id="orb1" cx="20%" cy="30%" r="40%">
+      <stop offset="0%"  stop-color="oklch(0.85 0.18 195)" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="oklch(0.85 0.18 195)" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="orb2" cx="85%" cy="80%" r="50%">
+      <stop offset="0%"  stop-color="oklch(0.62 0.18 240)" stop-opacity="0.30" />
+      <stop offset="100%" stop-color="oklch(0.62 0.18 240)" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 L 0 0 0 64" fill="none" stroke="oklch(0.97 0.005 240)" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#grid)" />
+  <rect width="1200" height="630" fill="url(#orb1)" />
+  <rect width="1200" height="630" fill="url(#orb2)" />
+
+  <!-- Accent border -->
+  <rect x="6" y="6" width="1188" height="618" fill="none" stroke="oklch(0.85 0.18 195)" stroke-opacity="0.4" stroke-width="2" rx="20" />
+
+  <!-- Eyebrow chip -->
+  <g transform="translate(80, 96)">
+    <rect width="260" height="48" rx="24" fill="oklch(0.85 0.18 195)" fill-opacity="0.10" stroke="oklch(0.85 0.18 195)" stroke-opacity="0.35"/>
+    <text x="130" y="31" text-anchor="middle" fill="oklch(0.85 0.18 195)" font-family="Space Grotesk, system-ui, sans-serif"
+          font-size="16" font-weight="500" letter-spacing="2" text-transform="uppercase">{BUSINESS_TAGLINE}</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="320" fill="oklch(0.97 0.005 240)"
+        font-family="Space Grotesk, system-ui, sans-serif"
+        font-size="92" font-weight="800" letter-spacing="-3">{BUSINESS_NAME}</text>
+
+  <!-- Description -->
+  <text x="80" y="400" fill="oklch(0.97 0.005 240)" fill-opacity="0.65"
+        font-family="Space Grotesk, system-ui, sans-serif"
+        font-size="28" font-weight="400">
+    {BUSINESS_DESCRIPTION}
+  </text>
+
+  <!-- Footer brand line -->
+  <line x1="80" y1="528" x2="1120" y2="528" stroke="oklch(0.97 0.005 240)" stroke-opacity="0.10" />
+  <text x="80" y="572" fill="oklch(0.97 0.005 240)" fill-opacity="0.55"
+        font-family="Space Grotesk, system-ui, sans-serif"
+        font-size="20" font-weight="500" letter-spacing="3" text-transform="uppercase">
+    {BUSINESS_URL}
+  </text>
+  <circle cx="1108" cy="566" r="14" fill="oklch(0.85 0.18 195)" />
+  <circle cx="1078" cy="566" r="14" fill="oklch(0.62 0.18 240)" />
+
+  <!-- Brand hue/chroma watermark for debugging -->
+  <text x="1120" y="100" text-anchor="end" fill="oklch(0.97 0.005 240)" fill-opacity="0.18"
+        font-family="ui-monospace, monospace" font-size="13">oklch · h 240 · c 0.18</text>
+</svg>

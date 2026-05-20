@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { applyBrand } from './brand';
 import { initCursorRipple } from './lib/cursor';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import 'animate.css/animate.min.css';
 import './index.css';
 
@@ -21,8 +22,10 @@ initCursorRipple();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ErrorBoundary>
   </React.StrictMode>
 );

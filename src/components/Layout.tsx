@@ -4,6 +4,7 @@ import { Lightbox } from './Lightbox';
 import SkipLink from './SkipLink';
 import BackToTop from './BackToTop';
 import { CommandPalette } from './CommandPalette';
+import { DevA11yBadge } from './DevA11yBadge';
 
 interface Props {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function Layout({ children }: Props) {
       <BackToTop />
       <Lightbox />
       <CommandPalette />
+      <DevA11yBadge />
     </>
   );
 }
