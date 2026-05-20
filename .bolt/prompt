@@ -1,0 +1,76 @@
+You are working inside a **projectsites.dev cinematic website template** powered by Vite + React 18 + TypeScript + Tailwind CSS 3 + React Router 6. Your job is to customize this template into a real, production-ready website for the business the user describes.
+
+## The single source of truth is `_brand.json`
+
+Every visual decision — colors, fonts, business name, copy placeholders, feature flags — lives in `_brand.json` at the repo root. It follows the W3C DTCG (Design Tokens Community Group) format with `$value`, `$type`, `$description`.
+
+**Edit `_brand.json` first.** Then update component text. Do NOT hardcode colors or business name anywhere else.
+
+To rebrand:
+1. Set `business.name`, `business.tagline`, `business.description`, etc.
+2. Rotate `color.brandHue` (0-360) to skin the whole site — every OKLCH color references it.
+3. Set `colorScheme` to `dark`, `light`, or `auto`.
+4. Toggle `features.*` booleans to show/hide entire homepage sections.
+
+The `applyBrand()` function in `src/brand.ts` reads this file at boot and writes CSS custom properties to `:root`. Tailwind (`tailwind.config.ts`) reads those CSS vars — so a single hue change cascades through every utility class.
+
+## Project layout
+
+```
+_brand.json                 ← single source of truth (DTCG tokens)
+src/
+  brand.ts                  ← resolves _brand.json → CSS vars
+  main.tsx                  ← entry; calls applyBrand()
+  App.tsx                   ← routes (15 universal pages)
+  index.css                 ← OKLCH design tokens + utilities
+  components/
+    Layout.tsx              ← Header + Footer + Lightbox + CommandPalette
+    Header.tsx              ← sticky nav with ⌘K + theme toggle
+    Footer.tsx              ← 4-col footer
+    CommandPalette.tsx      ← universal ⌘K palette
+    ThemeToggle.tsx         ← dark/light/auto cycle
+    Lightbox.tsx            ← PhotoSwipe auto-mount
+    sections/               ← composable section components
+      HeroVariants.tsx      ← HeroCenter, HeroSplit
+      KineticHeadline.tsx   ← scroll-driven variable-font headline
+      BentoGrid.tsx         ← Apple WWDC-style asymmetric grid
+      Stats.tsx, FAQ.tsx, Pricing.tsx, Comparison.tsx, …
+  pages/                    ← Home, About, Services, Pricing, FAQ,
+                              Blog, BlogPost, Team, CaseStudies,
+                              Contact, Privacy, Terms, Accessibility,
+                              NotFound
+  lib/
+    businessSchema.ts       ← JSON-LD graph (Org/WebSite/WebPage/Breadcrumb)
+  hooks/
+    useSEO.ts, useInView.ts
+public/
+  site.webmanifest, robots.txt, sitemap.xml, sw.js, llms.txt
+  .well-known/security.txt
+```
+
+## Customization checklist (do these every time)
+
+1. **Edit `_brand.json`** with the real business data. Rotate `color.brandHue` for visual variety.
+2. **Replace `{PLACEHOLDER}` strings** in `src/pages/*.tsx` with real copy.
+3. **Update `index.html`** title + meta description + canonical + OG image URL.
+4. **Update `public/site.webmanifest`** name + short_name + description.
+5. **Update `public/robots.txt`, `public/sitemap.xml`, `public/llms.txt`** with the real domain.
+6. **Toggle `features.*` in `_brand.json`** — disable sections that don't fit the business (e.g. set `pricing: false` for a portfolio, `team: true` for an agency).
+7. **Add real images.** Drop into `public/` and reference with `/path.jpg`. Set `loading="eager"` + `fetchPriority="high"` only on the LCP image.
+8. **Run `npm install` then `npm run build`** to verify everything compiles.
+
+## Hard rules
+
+- **Never delete `_brand.json` or `src/brand.ts`** — the whole theme system depends on them.
+- **Never hardcode hex colors** in components. Use Tailwind tokens (`bg-accent`, `text-text-muted`) which resolve from CSS vars.
+- **Never use `npm i pkg`** — add deps to `package.json` and let `npm install` resolve them.
+- **All images need `alt` text.** No exceptions. Empty `alt=""` only for decorative images.
+- **Every clickable email/phone/address must be a real link** (`mailto:`, `tel:`, Google Maps URL).
+- **Press `⌘K` (or `Ctrl+K`) opens the command palette.** Mounted in `Layout.tsx`. Do not remove.
+- **Reduced motion is respected automatically** via `@media (prefers-reduced-motion: reduce)`.
+
+## Stack constraints (WebContainer)
+
+- Use libsql/sqlite if you need a database (not better-sqlite3 — no native binaries).
+- Prefer Node scripts over shell scripts.
+- Do not run `npm run dev` as a shell command — bolt.diy starts the dev server.

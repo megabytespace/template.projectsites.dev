@@ -1,0 +1,113 @@
+import { type ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+
+type Span = 'sm' | 'md' | 'lg' | 'xl';
+
+export interface BentoTile {
+  id: string;
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+  image?: string;
+  imageAlt?: string;
+  href?: string;
+  span?: Span;
+  tall?: boolean;
+  accent?: boolean;
+}
+
+interface Props {
+  tiles: BentoTile[];
+  className?: string;
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+}
+
+const SPAN_CLASS: Record<Span, string> = {
+  sm: 'bento-sm',
+  md: 'bento-md',
+  lg: 'bento-lg',
+  xl: 'bento-xl',
+};
+
+/**
+ * Apple-WWDC-style bento grid. 12-col dense pack with subgrid alignment.
+ * Per-tile `span` controls width; `tall` doubles the row span.
+ * The first tile is treated as the hero cell (auto-promoted to span-lg + tall).
+ */
+export function BentoGrid({ tiles, className, eyebrow, headline, description }: Props) {
+  return (
+    <section className={cn('py-24 md:py-32 max-w-container-wide mx-auto px-6', className)}>
+      {(eyebrow || headline) && (
+        <div className="text-center mb-12 reveal-on-view">
+          {eyebrow && (
+            <span className="text-accent text-sm font-mono tracking-widest uppercase">
+              {eyebrow}
+            </span>
+          )}
+          {headline && (
+            <h2 className="text-3xl md:text-5xl font-bold font-heading mt-4 mb-4 text-text">
+              {headline}
+            </h2>
+          )}
+          {description && (
+            <p className="max-w-2xl mx-auto text-text-muted text-lg">{description}</p>
+          )}
+        </div>
+      )}
+
+      <div className="bento">
+        {tiles.map((t, i) => {
+          const isHero = i === 0;
+          const Comp: 'a' | 'div' = t.href ? 'a' : 'div';
+          const span = t.span ?? (isHero ? 'lg' : 'sm');
+          const tall = t.tall ?? isHero;
+          return (
+            <Comp
+              key={t.id}
+              {...(t.href ? { href: t.href } : {})}
+              className={cn(
+                'group relative overflow-hidden card-tactile p-6 md:p-8',
+                'interactive-4 reveal-on-view',
+                SPAN_CLASS[span],
+                tall && 'bento-tall',
+                t.accent && 'bg-gradient-to-br from-accent/10 to-primary/5 border-accent/30'
+              )}
+            >
+              {t.image && (
+                <div className="absolute inset-0 -z-10">
+                  <img
+                    src={t.image}
+                    alt={t.imageAlt ?? ''}
+                    loading={i < 3 ? 'eager' : 'lazy'}
+                    className="h-full w-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-base"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent" />
+                </div>
+              )}
+              {t.icon && (
+                <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 text-accent group-hover:bg-accent/20 transition-colors">
+                  {t.icon}
+                </div>
+              )}
+              <h3 className="text-xl md:text-2xl font-bold font-heading text-text mb-2 underline-hover inline-block">
+                {t.title}
+              </h3>
+              {t.description && (
+                <p className="text-text-muted text-sm md:text-base leading-relaxed">{t.description}</p>
+              )}
+              {t.href && (
+                <span aria-hidden="true" className="absolute bottom-6 right-6 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                  →
+                </span>
+              )}
+            </Comp>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+export default BentoGrid;

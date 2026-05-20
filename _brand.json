@@ -1,0 +1,130 @@
+{
+  "$schema": "https://schemas.designtokens.org/2025-10",
+  "$description": "Brand source-of-truth (W3C DTCG). Every visual decision lives here. Edit ONLY this file to rebrand the entire site.",
+
+  "business": {
+    "name":          { "$value": "{BUSINESS_NAME}",          "$type": "string", "$description": "Display name. 15-40 chars." },
+    "shortName":     { "$value": "{BUSINESS_SHORT_NAME}",    "$type": "string", "$description": "Used in PWA install + nav. 4-12 chars." },
+    "tagline":       { "$value": "{BUSINESS_TAGLINE}",       "$type": "string", "$description": "3-5 words. Eyebrow line above H1." },
+    "description":   { "$value": "{BUSINESS_DESCRIPTION}",   "$type": "string", "$description": "Meta description. 120-156 chars HARD limit." },
+    "url":           { "$value": "{BUSINESS_URL}",           "$type": "string", "$description": "Canonical https URL, no trailing slash." },
+    "businessClass": { "$value": "{BUSINESS_CLASS}",         "$type": "string", "$description": "storefront|restaurant|medical|retail|salon|gym|auto-repair|saas|portfolio|nonprofit|legal|organization" },
+    "email":         { "$value": "{BUSINESS_EMAIL}",         "$type": "string" },
+    "phone":         { "$value": "{BUSINESS_PHONE}",         "$type": "string", "$description": "E.164 (e.g. +12025550100)." },
+    "address":       { "$value": "{BUSINESS_ADDRESS}",       "$type": "string", "$description": "One line, comma-separated." },
+    "hours":         { "$value": "{BUSINESS_HOURS}",         "$type": "string", "$description": "Human-readable hours line." }
+  },
+
+  "color": {
+    "brandHue":        { "$value": "240", "$type": "number", "$description": "Master OKLCH hue (0-360). Rotate this to re-skin." },
+    "brandChroma":     { "$value": "0.18", "$type": "number", "$description": "Saturation knob (0.05-0.30)." },
+
+    "primary":         { "$value": "oklch(0.62 {color.brandChroma} {color.brandHue})", "$type": "color" },
+    "primaryHover":    { "$value": "oklch(0.56 {color.brandChroma} {color.brandHue})", "$type": "color" },
+    "accent":          { "$value": "oklch(0.85 0.18 195)",  "$type": "color", "$description": "Highlight color, distinct from primary." },
+    "accentHover":     { "$value": "oklch(0.78 0.18 195)",  "$type": "color" },
+
+    "background":      { "$value": "oklch(0.08 0.02 {color.brandHue})", "$type": "color", "$description": "Page background. Dark-first." },
+    "surface":         { "$value": "oklch(0.12 0.02 {color.brandHue})", "$type": "color", "$description": "Cards, glass panels." },
+    "surfaceElevated": { "$value": "oklch(0.16 0.02 {color.brandHue})", "$type": "color" },
+    "border":          { "$value": "oklch(0.22 0.02 {color.brandHue})", "$type": "color" },
+
+    "text":            { "$value": "oklch(0.97 0.005 {color.brandHue})", "$type": "color" },
+    "textMuted":       { "$value": "oklch(0.65 0.01 {color.brandHue})",  "$type": "color" },
+    "textSubtle":      { "$value": "oklch(0.45 0.01 {color.brandHue})",  "$type": "color" },
+
+    "success":         { "$value": "oklch(0.74 0.16 152)", "$type": "color" },
+    "warning":         { "$value": "oklch(0.82 0.16 85)",  "$type": "color" },
+    "danger":          { "$value": "oklch(0.66 0.22 28)",  "$type": "color" },
+    "info":            { "$value": "oklch(0.72 0.15 235)", "$type": "color" }
+  },
+
+  "colorScheme": {
+    "$value": "dark",
+    "$type": "string",
+    "$description": "dark | light | auto. Affects body bg + meta name=color-scheme."
+  },
+
+  "font": {
+    "heading":   { "$value": "Space Grotesk", "$type": "fontFamily", "$description": "Display font. Geometric, condensed, or expressive." },
+    "body":      { "$value": "Inter",         "$type": "fontFamily" },
+    "mono":      { "$value": "JetBrains Mono","$type": "fontFamily" },
+    "weights":   { "$value": [300,400,500,600,700,800,900], "$type": "fontWeight" },
+    "fluidScale":{ "$value": "clamp", "$type": "string", "$description": "clamp | step | fixed. Sets type-scale strategy." }
+  },
+
+  "radius": {
+    "sm":  { "$value": "0.375rem", "$type": "dimension" },
+    "md":  { "$value": "0.75rem",  "$type": "dimension" },
+    "lg":  { "$value": "1rem",     "$type": "dimension" },
+    "xl":  { "$value": "1.5rem",   "$type": "dimension" },
+    "2xl": { "$value": "2rem",     "$type": "dimension" },
+    "full":{ "$value": "9999px",   "$type": "dimension" }
+  },
+
+  "spacing": {
+    "$description": "8pt base scale. Use semantic refs in components.",
+    "0":  { "$value": "0",       "$type": "dimension" },
+    "1":  { "$value": "0.25rem", "$type": "dimension" },
+    "2":  { "$value": "0.5rem",  "$type": "dimension" },
+    "3":  { "$value": "0.75rem", "$type": "dimension" },
+    "4":  { "$value": "1rem",    "$type": "dimension" },
+    "6":  { "$value": "1.5rem",  "$type": "dimension" },
+    "8":  { "$value": "2rem",    "$type": "dimension" },
+    "12": { "$value": "3rem",    "$type": "dimension" },
+    "16": { "$value": "4rem",    "$type": "dimension" },
+    "24": { "$value": "6rem",    "$type": "dimension" },
+    "32": { "$value": "8rem",    "$type": "dimension" }
+  },
+
+  "shadow": {
+    "sm":   { "$value": "0 1px 2px 0 oklch(0 0 0 / 0.05)", "$type": "shadow" },
+    "md":   { "$value": "0 8px 24px -8px oklch(0 0 0 / 0.40)", "$type": "shadow" },
+    "lg":   { "$value": "0 16px 48px -12px oklch(0 0 0 / 0.55)", "$type": "shadow" },
+    "glow": { "$value": "0 0 40px -8px {color.primary}", "$type": "shadow" }
+  },
+
+  "motion": {
+    "easing":   { "$value": "cubic-bezier(0.16, 1, 0.3, 1)", "$type": "cubicBezier" },
+    "duration": {
+      "fast":   { "$value": "150ms",  "$type": "duration" },
+      "base":   { "$value": "250ms",  "$type": "duration" },
+      "slow":   { "$value": "450ms",  "$type": "duration" },
+      "scroll": { "$value": "1200ms", "$type": "duration" }
+    }
+  },
+
+  "layout": {
+    "containerWide":   { "$value": "80rem", "$type": "dimension" },
+    "containerNormal": { "$value": "64rem", "$type": "dimension" },
+    "containerProse":  { "$value": "42rem", "$type": "dimension" }
+  },
+
+  "social": {
+    "facebook":  { "$value": "", "$type": "string" },
+    "instagram": { "$value": "", "$type": "string" },
+    "linkedin":  { "$value": "", "$type": "string" },
+    "twitter":   { "$value": "", "$type": "string" },
+    "youtube":   { "$value": "", "$type": "string" },
+    "tiktok":    { "$value": "", "$type": "string" },
+    "github":    { "$value": "", "$type": "string" }
+  },
+
+  "features": {
+    "$description": "Boolean kill-switches per section. AI flips these to true/false to compose the site.",
+    "hero":         { "$value": true,  "$type": "boolean" },
+    "bento":        { "$value": true,  "$type": "boolean" },
+    "stats":        { "$value": true,  "$type": "boolean" },
+    "services":     { "$value": true,  "$type": "boolean" },
+    "process":      { "$value": false, "$type": "boolean" },
+    "testimonials": { "$value": true,  "$type": "boolean" },
+    "logoCloud":    { "$value": false, "$type": "boolean" },
+    "pricing":      { "$value": false, "$type": "boolean" },
+    "faq":          { "$value": true,  "$type": "boolean" },
+    "blog":         { "$value": false, "$type": "boolean" },
+    "team":         { "$value": false, "$type": "boolean" },
+    "caseStudies":  { "$value": false, "$type": "boolean" },
+    "newsletter":   { "$value": true,  "$type": "boolean" },
+    "cta":          { "$value": true,  "$type": "boolean" }
+  }
+}

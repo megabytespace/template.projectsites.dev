@@ -3,6 +3,7 @@ import Footer from './Footer';
 import { Lightbox } from './Lightbox';
 import SkipLink from './SkipLink';
 import BackToTop from './BackToTop';
+import { CommandPalette } from './CommandPalette';
 
 interface Props {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export default function Layout({ children }: Props) {
       <Footer />
       <BackToTop />
       <Lightbox />
+      <CommandPalette />
     </>
   );
 }

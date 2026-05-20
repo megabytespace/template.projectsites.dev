@@ -1,46 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0a0a1a">
-  <title>{BUSINESS_NAME}</title>
-  <meta name="description" content="{BUSINESS_DESCRIPTION}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0a0a1a" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+  <title>{BUSINESS_NAME} — {BUSINESS_TAGLINE}</title>
+  <meta name="description" content="{BUSINESS_DESCRIPTION}" />
+  <meta name="generator" content="ProjectSites — projectsites.dev" />
+  <link rel="canonical" href="{BUSINESS_URL}/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{BUSINESS_NAME} — {BUSINESS_TAGLINE}" />
+  <meta property="og:description" content="{BUSINESS_DESCRIPTION}" />
+  <meta property="og:url" content="{BUSINESS_URL}/" />
+  <meta property="og:image" content="{BUSINESS_URL}/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="{BUSINESS_SHORT_NAME}" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{BUSINESS_NAME}" />
+  <meta name="twitter:description" content="{BUSINESS_DESCRIPTION}" />
+  <meta name="twitter:image" content="{BUSINESS_URL}/og-image.png" />
 
   <!-- PWA / app identity -->
-  <meta name="application-name" content="{BUSINESS_SHORT_NAME}">
-  <meta name="apple-mobile-web-app-title" content="{BUSINESS_SHORT_NAME}">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="format-detection" content="telephone=no">
+  <meta name="application-name" content="{BUSINESS_SHORT_NAME}" />
+  <meta name="apple-mobile-web-app-title" content="{BUSINESS_SHORT_NAME}" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
 
   <!-- Manifest + icons -->
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#64ffda">
-  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#64ffda" />
+  <link rel="shortcut icon" href="/favicon.ico" />
 
   <!-- Microsoft tile -->
-  <meta name="msapplication-TileColor" content="#0a0a1a">
-  <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta name="msapplication-TileColor" content="#0a0a1a" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Speculation Rules — prerender same-origin links for instant nav. -->
+  <script type="speculationrules">
+    {
+      "prerender": [
+        { "where": { "and": [{ "href_matches": "/*" }, { "not": { "selector_matches": "[data-no-prerender]" } }] }, "eagerness": "moderate" }
+      ]
+    }
+  </script>
+
+  <!-- Fonts: preconnect, then non-blocking stylesheet load. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  />
+
+  <!-- No-FOUC: match initial bg to brand. Replaced at runtime by applyBrand(). -->
+  <style>
+    :root { color-scheme: dark; }
+    html, body { background-color: #0a0a1a; color: #f6f6f8; margin: 0; }
+  </style>
 </head>
 <body>
   <div id="root"></div>
+  <noscript>
+    <p style="padding:2rem;text-align:center;font-family:system-ui,sans-serif;">
+      JavaScript is required for the full experience. Core content remains in the page source.
+    </p>
+  </noscript>
   <script type="module" src="/src/main.tsx"></script>
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-      });
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
     }
   </script>
 </body>

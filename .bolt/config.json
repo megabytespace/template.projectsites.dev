@@ -1,0 +1,13 @@
+{
+  "$schema": "https://stackblitz-labs.github.io/bolt.diy/schemas/template-config.json",
+  "name": "ProjectSites cinematic template",
+  "description": "Vite + React 18 + TS + Tailwind + Router. DTCG brand-token system, kinetic hero, bento grid, Cmd+K palette, full PWA kit, 14 universal pages.",
+  "tags": ["react", "vite", "typescript", "tailwind", "router", "saas", "marketing", "pwa"],
+  "framework": "react",
+  "language": "typescript",
+  "css": "tailwindcss",
+  "router": "react-router",
+  "entry": "src/main.tsx",
+  "build": { "command": "npm run build", "output": "dist" },
+  "dev":   { "command": "npm run dev",   "port": 5173 }
+}

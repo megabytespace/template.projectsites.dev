@@ -1,84 +1,175 @@
-# template.projectsites.dev — Claude Code Website Template
+# template.projectsites.dev — Cinematic Website Template
 
-## Purpose
-Starting template for AI-generated websites on projectsites.dev.
-Claude Code clones this, runs `npm install`, then customizes for each business.
+A production-ready React + Vite + Tailwind template built for AI customization. Drop a brand into `_brand.json`, fill in copy placeholders, ship. Works with bolt.diy, bolt.new, Claude Code, Cursor — anything that can edit JSON + JSX.
 
-## Tech Stack
-- **Vite** — fast dev server + build
-- **React 18** — component-based UI
-- **Tailwind CSS 3** — utility-first styling
-- **React Router** — multi-page navigation
-- **Lucide React** — SVG icons
-- **clsx + tailwind-merge** — conditional class utilities
-- **yet-another-react-lightbox** — image lightbox (auto-mounted in Layout)
+## Architecture in one screen
 
-## File Structure
 ```
-├── index.html              # Vite entry point
-├── package.json            # Dependencies
-├── vite.config.js          # Vite config
-├── tailwind.config.js      # Tailwind theme (brand colors, fonts)
-├── postcss.config.js       # PostCSS + Tailwind
-├── src/
-│   ├── main.jsx            # React entry point
-│   ├── App.jsx             # Router with all pages
-│   ├── styles/globals.css  # Tailwind directives + CSS variables
-│   ├── components/
-│   │   ├── Layout.jsx      # Nav + Footer wrapper
-│   │   ├── Nav.jsx         # Sticky nav with mobile hamburger
-│   │   └── Footer.jsx      # 4-column footer
-│   └── pages/
-│       ├── Home.jsx        # Homepage with all sections
-│       ├── About.jsx       # About page
-│       ├── Services.jsx    # Services/menu/portfolio page
-│       ├── Contact.jsx     # Contact form + info
-│       ├── Privacy.jsx     # Privacy policy
-│       └── Terms.jsx       # Terms of service
-├── robots.txt
-├── sitemap.xml
-└── CLAUDE.md
+_brand.json              ← single source of truth (W3C DTCG tokens)
+   ↓ resolved by
+src/brand.ts             ← applies CSS custom properties at boot
+   ↓ consumed by
+src/index.css            ← @layer base / utilities (OKLCH-first)
+tailwind.config.ts       ← Tailwind utilities point at CSS vars
+   ↓ used by
+src/components/*         ← all components read tokens via `bg-accent`, `text-text-muted` etc.
 ```
 
-## Claude Code Instructions
-1. Run `npm install` first
-2. Customize `tailwind.config.js` with brand colors and fonts
-3. Update `src/styles/globals.css` CSS variables
-4. Replace ALL placeholder content in pages with real business content
-5. Update Nav.jsx and Footer.jsx with business name + links
-6. Add industry-specific pages (menu.html for restaurants, etc.)
-7. Run `npm run build` to generate production files in /dist
-8. Upload /dist contents to R2
+**Rotate one number (`color.brandHue`), reskin the entire site.** Color, surfaces, text, gradients, glows — every OKLCH color references the brand hue.
 
-## Quality Standards
-- Every page: 500+ words of real content
-- All text: proper contrast (readable)
-- Contact form: POSTs to projectsites.dev/api/contact-form/{slug}
-- JSON-LD schema in Home.jsx
-- Mobile responsive at 375px
-- Lighthouse target: 90+
+## Stack
 
-## Lightbox (Lightbox.tsx)
-Auto-detects every `<main>` image >= 200×200 not inside `<a>`/`<button>`/
-`[data-no-zoom]`. Marks them `data-zoomable="true"` + `cursor: zoom-in`.
-Click → YARL opens with Captions, Counter, Download, Fullscreen,
-Slideshow, Thumbnails, Zoom plugins. Captions toggle is hidden
-(`showToggle: false`) — captions show automatically from `alt` text.
-No share button (raises privacy concerns + bloats toolbar).
+- **Vite 5** + **React 18** + **TypeScript 5**
+- **Tailwind 3** with cascade layers, CSS variables, OKLCH
+- **React Router 6** — 15 universal pages registered
+- **PhotoSwipe v5** lightbox (auto-mounted)
+- **animate.css** + custom keyframes
+- **lucide-react** for icons
+- **Radix primitives** for headless slots
+- Zero state-management library (component-local state is enough for a marketing site)
 
-**Galleries:** wrap groups with `<div data-gallery="services">…</div>` —
-clicking any image opens the gallery scoped to that container, not just
-the single image. Without `data-gallery`, the component walks up the DOM
-to find the nearest ancestor with 2+ eligible images.
+## Universal pages (registered in `src/App.tsx`)
 
-**Fonts:** the lightbox inherits `var(--font-body)` for the toolbar /
-counter / thumbnails and `var(--font-heading)` for captions. Define both
-CSS variables in your `index.css` `:root` block so the lightbox matches
-the rest of the site.
+| Route | File | Purpose |
+| --- | --- | --- |
+| `/` | `Home.tsx` | Hero + bento + stats + features + process + pricing + FAQ + CTA |
+| `/about` | `About.tsx` | Company story, mission, stats |
+| `/services` | `Services.tsx` | Service grid |
+| `/pricing` | `Pricing.tsx` | 3-tier pricing + comparison + FAQ |
+| `/faq` | `FAQ.tsx` | Grouped FAQ with FAQPage JSON-LD |
+| `/blog` | `Blog.tsx` | Featured post + recent grid |
+| `/blog/:slug` | `BlogPost.tsx` | Long-form article with BlogPosting JSON-LD |
+| `/team` | `Team.tsx` | Person grid with Person JSON-LD |
+| `/case-studies` | `CaseStudies.tsx` | Portfolio of work with metrics |
+| `/contact` | `Contact.tsx` | Form + NAP block |
+| `/privacy`, `/terms`, `/accessibility` | legal | WCAG 2.2 AA statement included |
+| `*` | `NotFound.tsx` | 404 with search + back/home |
 
-**CSS overrides in index.css are mandatory.** YARL's portal uses
-`position: fixed; top:0; bottom:0` — but any ancestor with `transform`,
-`filter`, `will-change: transform`, `contain`, or `backdrop-filter`
-becomes the containing block, breaking viewport sizing. The `100vw/100dvh`
-overrides force the portal to ignore the containing-block trap. Do not
-remove them.
+## Composable section library (`src/components/sections/`)
+
+| Component | Use case |
+| --- | --- |
+| `HeroCenter`, `HeroSplit` | Two hero layouts |
+| `KineticHeadline` | Scroll-driven variable-font headline |
+| `BentoGrid` | Apple-WWDC-style asymmetric grid (Fluid Bento with subgrid) |
+| `Stats` | Animated number rollup |
+| `LogoCloud` | Marquee or grid of partner logos |
+| `Marquee` | Generic infinite scroller (pauses on hover, respects reduced motion) |
+| `ProcessSteps` | Numbered "how it works" |
+| `FeatureSplit` | Image-left / image-right block |
+| `Pricing` | 3-tier with monthly/yearly toggle + Product JSON-LD |
+| `Comparison` | Competitive / tier comparison table |
+| `FAQ` | Disclosure widget + FAQPage JSON-LD (highest AI citation rate) |
+| `CTASection` | Closer block (emphatic or quiet tone) |
+| `TeamGrid` | Person cards with Person JSON-LD |
+| `BlogList` | Featured + grid posts |
+| `CaseStudyGrid` | Portfolio grid with metrics |
+
+All sections accept the same shape: `eyebrow`, `headline`, `description`, and a typed data prop. Read tokens through Tailwind utilities — never hardcode colors.
+
+## Theme system
+
+### `_brand.json` (W3C DTCG)
+
+```json
+{
+  "color": {
+    "brandHue":    { "$value": "240" },
+    "brandChroma": { "$value": "0.18" },
+    "primary":     { "$value": "oklch(0.62 {color.brandChroma} {color.brandHue})" }
+  }
+}
+```
+
+`src/brand.ts` resolves the alias references (`{color.brandHue}` → `240`) and writes the result to CSS variables. Tailwind utilities (`bg-primary`, `text-text-muted`) point at those vars. **One edit cascades everywhere.**
+
+### Light / dark / auto
+
+Set `colorScheme` in `_brand.json` to `dark`, `light`, or `auto`. The user can also cycle modes via the **ThemeToggle** in the header. Choice persists in `localStorage`.
+
+### Feature flags
+
+`features.*` in `_brand.json` toggles entire homepage sections on/off:
+
+```json
+"features": {
+  "hero":        true,
+  "bento":       true,
+  "stats":       true,
+  "process":     false,
+  "pricing":     false,
+  "faq":         true,
+  "logoCloud":   false,
+  "team":        false,
+  "caseStudies": false
+}
+```
+
+`featureOn('pricing')` in `Home.tsx` reads these — no need to delete code, just flip the boolean.
+
+## Cmd+K palette
+
+Press `⌘K` (Mac) or `Ctrl+K` (Win/Linux) anywhere to open the universal command palette. Lists all routes + the theme toggle. Esc closes and returns focus to the trigger.
+
+Add custom actions:
+
+```tsx
+import { CommandPalette } from '@/components/CommandPalette';
+
+<CommandPalette extra={[
+  { id: 'book', label: 'Book a demo', group: 'Actions', href: '/contact?intent=demo' },
+]} />
+```
+
+## PWA kit (full)
+
+- `site.webmanifest` with `screenshots[]`, `shortcuts[]`, `share_target`, maskable icons
+- `sw.js` cache-first + network-first split with `offline.html` fallback
+- `apple-touch-icon` 180×180, favicon 32/16, android-chrome 192/512, maskable 512
+- `browserconfig.xml` Windows tile
+- `theme-color` per `prefers-color-scheme`
+
+## SEO + GEO
+
+- 5+ JSON-LD blocks per page (Organization / WebSite / WebPage / BreadcrumbList / FAQPage)
+- Per-page `useSEO({ title, description })` hook writes `<title>` + meta dynamically
+- Speculation Rules `<script type="speculationrules">` in `index.html` prerenders internal links
+- `llms.txt` for LLM crawlers
+- `robots.txt` explicitly lists GPTBot / ClaudeBot / PerplexityBot / Google-Extended
+- `sitemap.xml` with `<lastmod>` per URL
+
+## Accessibility (WCAG 2.2 AA)
+
+- Skip-to-main link
+- Focus rings everywhere (`:focus-visible` 3px accent)
+- Target size ≥24px (44px for primary CTAs)
+- `prefers-reduced-motion` cuts all animation
+- `aria-current`, `aria-expanded`, `aria-controls` on nav + accordions
+- Form labels visible + linked
+- Color contrast tested against OKLCH lightness ramps
+
+## Build
+
+```bash
+npm install
+npm run build      # → dist/
+npm run dev        # → http://localhost:5173
+```
+
+## Quality bar
+
+- Every page: ≥500 words of real content
+- LCP ≤2.5s, INP ≤200ms, CLS ≤0.1
+- Lighthouse: Perf ≥90, A11y ≥95, SEO ≥95
+- Zero console errors
+- Zero placeholder strings in production (every `{PLACEHOLDER}` replaced)
+
+## What NOT to touch
+
+| File | Why |
+| --- | --- |
+| `_brand.json` | Edit it — but **only** edit it. Don't move or rename. |
+| `src/brand.ts` | The resolver. Edit only if extending DTCG support. |
+| `src/index.css` token block | Initial fallbacks. Don't hardcode brand colors here. |
+| `tailwind.config.ts` color block | All colors point at CSS vars. Don't replace with hex. |
+| `.bolt/` | bolt.diy meta. Hands off. |

@@ -1,0 +1,78 @@
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
+
+export interface CaseStudy {
+  slug: string;
+  title: string;
+  client: string;
+  summary: string;
+  industry?: string;
+  metrics?: { value: string; label: string }[];
+  cover?: string;
+}
+
+interface Props {
+  studies: CaseStudy[];
+  eyebrow?: string;
+  headline?: string;
+  className?: string;
+  basePath?: string;
+}
+
+export function CaseStudyGrid({ studies, eyebrow, headline, className, basePath = '/case-studies' }: Props) {
+  return (
+    <section className={cn('py-24 md:py-32 max-w-container-wide mx-auto px-6', className)}>
+      {(eyebrow || headline) && (
+        <div className="text-center mb-12 reveal-on-view">
+          {eyebrow && <span className="text-accent text-sm font-mono tracking-widest uppercase">{eyebrow}</span>}
+          {headline && (
+            <h2 className="text-3xl md:text-5xl font-bold font-heading mt-4 text-text">{headline}</h2>
+          )}
+        </div>
+      )}
+      <ul className="grid md:grid-cols-2 gap-8">
+        {studies.map((s) => (
+          <li key={s.slug}>
+            <Link
+              to={`${basePath}/${s.slug}`}
+              className="group block card-tactile overflow-hidden interactive-4 h-full"
+            >
+              {s.cover && (
+                <div className="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={s.cover}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-slow"
+                  />
+                </div>
+              )}
+              <div className="p-8">
+                {s.industry && (
+                  <span className="text-accent font-mono text-xs uppercase tracking-widest">{s.industry}</span>
+                )}
+                <h3 className="mt-2 font-heading text-2xl font-bold text-text underline-hover inline-block">
+                  {s.title}
+                </h3>
+                <p className="mt-1 text-sm text-text-subtle">Client: {s.client}</p>
+                <p className="mt-4 text-text-muted leading-relaxed">{s.summary}</p>
+                {s.metrics && (
+                  <dl className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-6">
+                    {s.metrics.slice(0, 3).map((m) => (
+                      <div key={m.label}>
+                        <dt className="text-xs text-text-subtle uppercase tracking-wider">{m.label}</dt>
+                        <dd className="mt-1 font-heading text-2xl font-bold gradient-text">{m.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+export default CaseStudyGrid;

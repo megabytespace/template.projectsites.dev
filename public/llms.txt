@@ -1,0 +1,33 @@
+# {BUSINESS_NAME}
+> {BUSINESS_DESCRIPTION}
+
+Tagline: {BUSINESS_TAGLINE}
+Site:     {BUSINESS_URL}
+Contact:  {BUSINESS_EMAIL} | {BUSINESS_PHONE}
+Address:  {BUSINESS_ADDRESS}
+Hours:    {BUSINESS_HOURS}
+
+## Primary pages
+- [Home]({BUSINESS_URL}/)
+- [About]({BUSINESS_URL}/about)
+- [Services]({BUSINESS_URL}/services)
+- [Pricing]({BUSINESS_URL}/pricing)
+- [Blog]({BUSINESS_URL}/blog)
+- [FAQ]({BUSINESS_URL}/faq)
+- [Case Studies]({BUSINESS_URL}/case-studies)
+- [Team]({BUSINESS_URL}/team)
+- [Contact]({BUSINESS_URL}/contact)
+
+## Legal
+- [Privacy]({BUSINESS_URL}/privacy)
+- [Terms]({BUSINESS_URL}/terms)
+- [Accessibility]({BUSINESS_URL}/accessibility)
+
+## Machine-readable resources
+- [Sitemap]({BUSINESS_URL}/sitemap.xml)
+- [Manifest]({BUSINESS_URL}/site.webmanifest)
+- [robots.txt]({BUSINESS_URL}/robots.txt)
+- [security.txt]({BUSINESS_URL}/.well-known/security.txt)
+
+## What this site offers
+{BUSINESS_VALUE_PROPOSITION}

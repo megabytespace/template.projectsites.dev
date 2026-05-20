@@ -1,4 +1,56 @@
+# Production robots.txt — generated for projectsites.dev sites.
+# Each AI / LLM crawler is listed explicitly per the always.md mandate.
+
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /*.json$
+
+# Major AI / LLM crawlers (allowed for GEO + AI-search inclusion).
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Aggressive scraping bots — explicitly blocked.
+User-agent: Bytespider
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
 
 Sitemap: {BUSINESS_URL}/sitemap.xml

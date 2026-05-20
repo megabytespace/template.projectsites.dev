@@ -1,0 +1,31 @@
+# bolt.diy: files we don't want the LLM to rewrite from scratch each turn.
+# Listed here means: read-only context. Edit only if explicitly asked.
+
+node_modules
+dist
+.git
+.DS_Store
+*.log
+
+# Lockfile churn breaks WebContainer caches
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build artifacts
+.vite
+.cache
+
+# Local-only secrets
+.env
+.env.local
+.env.*.local
+
+# Generated icon binaries — replace via image upload, don't edit text.
+public/favicon*.png
+public/apple-touch-icon.png
+public/android-chrome-*.png
+public/maskable-*.png
+public/screenshot-*.png
+public/og-image.png
+public/safari-pinned-tab.svg
