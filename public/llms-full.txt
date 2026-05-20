@@ -1,0 +1,646 @@
+# projectsites-template (v3.0.0)
+
+> Production-ready cinematic website template built for AI customization. Vite + React 18 + TypeScript + Tailwind + React Router. Single source of truth in `_brand.json` (W3C DTCG format). 15 universal routes, 15 composable section components, ⌘K palette, full PWA kit, 5+ JSON-LD blocks per page.
+
+This file is the **full content manifest** — every component, page, token, and customization pattern in one place. Designed for LLM agents to consume without needing to walk the codebase.
+
+Companion files:
+- [llms.txt](./llms.txt) — short index
+- [AGENTS.md](https://github.com/heymegabyte/template.projectsites.dev/blob/main/AGENTS.md) — cross-IDE contract
+- [docs/](https://github.com/heymegabyte/template.projectsites.dev/tree/main/docs) — structured reference
+
+---
+
+## Mental model
+
+```
+_brand.json (DTCG tokens)
+    ↓
+src/brand.ts (resolver — applies CSS custom properties at boot)
+    ↓
+:root CSS variables  ←  src/index.css  ←  tailwind.config.ts
+    ↓
+src/components/* (every component reads `bg-accent`, `text-text-muted` etc.)
+    ↓
+src/pages/* (compose sections)
+    ↓
+src/App.tsx (15 routes wrapped in Layout)
+```
+
+Edit `_brand.json` to rebrand. Edit `src/pages/*.tsx` to set copy. Everything else cascades.
+
+---
+
+## File index
+
+```
+.bolt/                       bolt.diy meta — DO NOT EDIT
+├── prompt
+├── ignore
+└── config.json
+.github/
+└── copilot-instructions.md  GitHub Copilot config (points at AGENTS.md)
+.cursorrules                 Legacy Cursor config (points at AGENTS.md)
+.windsurfrules               Windsurf config (points at AGENTS.md)
+AGENTS.md                    Cross-IDE agent contract — read first
+CLAUDE.md                    Claude-specific architecture doc
+README.md                    Human-facing intro
+CHANGELOG.md                 Release history
+_brand.json                  Single source of truth (W3C DTCG)
+docs/                        Structured reference library
+├── README.md                Doc index
+├── AGENTS.md → ../AGENTS.md
+├── AI_GUIDE.md              LLM-specific patterns + decision trees
+├── ARCHITECTURE.md          How the pieces fit together
+├── BRAND.md                 _brand.json complete reference
+├── COMPONENTS.md            Section component catalog
+├── PAGES.md                 Route catalog
+├── RECIPES.md               Copy-paste customizations
+├── THEMING.md               Light/dark/auto + hue rotation
+├── SEO.md                   JSON-LD + GEO + AI search
+├── ACCESSIBILITY.md         WCAG 2.2 AA checklist
+├── DECISIONS.md             Architectural decisions
+├── GLOSSARY.md              Terminology
+└── profiles/                Industry-specific guides
+    ├── saas.md
+    ├── restaurant.md
+    ├── portfolio.md
+    ├── agency.md
+    ├── medical.md
+    ├── legal.md
+    ├── nonprofit.md
+    ├── retail.md
+    └── local-service.md
+examples/                    Drop-in _brand.json presets
+├── README.md
+├── _brand.saas.json
+├── _brand.restaurant.json
+├── _brand.portfolio.json
+├── _brand.agency.json
+├── _brand.medical.json
+├── _brand.legal.json
+├── _brand.nonprofit.json
+├── _brand.retail.json
+└── _brand.local-service.json
+src/
+├── brand.ts                 Token resolver
+├── main.tsx                 Entry (calls applyBrand)
+├── App.tsx                  15 routes
+├── index.css                @layer base + utilities (OKLCH)
+├── components/
+│   ├── Layout.tsx           Page chrome wrapper
+│   ├── Header.tsx           Sticky nav + ⌘K + ThemeToggle
+│   ├── Footer.tsx           4-col footer
+│   ├── CommandPalette.tsx   Universal ⌘K palette
+│   ├── ThemeToggle.tsx      Dark / light / auto cycle
+│   ├── Lightbox.tsx         PhotoSwipe auto-mount
+│   ├── JsonLd.tsx           Safe JSON-LD renderer
+│   ├── sections/            15 composable section components
+│   │   ├── HeroVariants.tsx (HeroCenter, HeroSplit)
+│   │   ├── KineticHeadline.tsx
+│   │   ├── BentoGrid.tsx
+│   │   ├── Stats.tsx
+│   │   ├── LogoCloud.tsx
+│   │   ├── Marquee.tsx
+│   │   ├── ProcessSteps.tsx
+│   │   ├── FeatureSplit.tsx
+│   │   ├── Pricing.tsx
+│   │   ├── Comparison.tsx
+│   │   ├── FAQ.tsx
+│   │   ├── CTASection.tsx
+│   │   ├── TeamGrid.tsx
+│   │   ├── BlogList.tsx
+│   │   ├── CaseStudyCard.tsx (CaseStudyGrid)
+│   │   └── index.ts
+│   ├── local/               Local-business specific
+│   │   ├── HeroWithPhoto.tsx
+│   │   ├── StickyPhoneCTA.tsx
+│   │   ├── TrustBadges.tsx
+│   │   ├── ServiceCards.tsx
+│   │   ├── TestimonialCarousel.tsx
+│   │   ├── MapEmbed.tsx
+│   │   ├── GalleryGrid.tsx
+│   │   ├── NAPFooter.tsx
+│   │   ├── ReviewCTA.tsx
+│   │   ├── BeforeAfterSlider.tsx
+│   │   ├── QuickActions.tsx
+│   │   ├── EmergencyBanner.tsx
+│   │   ├── SpeedDial.tsx
+│   │   ├── LocalSchemaGenerator.tsx
+│   │   └── BookingEmbed.tsx
+│   └── ui/                  Primitives
+│       ├── button.tsx
+│       └── card.tsx
+├── pages/                   15 routes
+│   ├── Home.tsx
+│   ├── About.tsx
+│   ├── Services.tsx
+│   ├── Pricing.tsx
+│   ├── FAQ.tsx
+│   ├── Blog.tsx
+│   ├── BlogPost.tsx
+│   ├── Team.tsx
+│   ├── CaseStudies.tsx
+│   ├── Contact.tsx
+│   ├── Privacy.tsx
+│   ├── Terms.tsx
+│   ├── Accessibility.tsx
+│   └── NotFound.tsx
+├── lib/
+│   ├── businessSchema.ts    JSON-LD graph builder
+│   ├── altText.ts           Alt-text dedupe / derive
+│   ├── cursor.ts            Click-ripple cursor
+│   └── utils.ts             cn() — tailwind-merge
+└── hooks/
+    ├── useSEO.ts
+    └── useInView.ts
+public/
+├── site.webmanifest         PWA manifest (full kit)
+├── robots.txt               Per-crawler allowlist
+├── sitemap.xml              All 12 public routes with lastmod
+├── llms.txt                 LLM index
+├── llms-full.txt            This file
+├── sw.js                    Service worker
+├── offline.html             Offline fallback
+├── 404.html, 500.html       Static error pages
+├── browserconfig.xml        Windows tile
+└── .well-known/
+    └── security.txt
+index.html                   Meta + OG + Speculation Rules + Fonts
+package.json                 Deps + scripts
+tailwind.config.ts           Tailwind config (reads CSS vars)
+tsconfig.json                TS config
+vite.config.ts               Vite config
+postcss.config.js            PostCSS + Tailwind + autoprefixer
+```
+
+---
+
+## Brand-token schema (`_brand.json`)
+
+W3C DTCG format. Every leaf has `$value`, optional `$type`, optional `$description`. Aliases via `{path.to.token}` syntax.
+
+### business.*
+
+| Key | Type | Notes |
+| --- | --- | --- |
+| `name` | string | Display name, 15-40 chars |
+| `shortName` | string | PWA install + nav, 4-12 chars |
+| `tagline` | string | Eyebrow line, 3-5 words |
+| `description` | string | Meta description, 120-156 chars |
+| `url` | string | Canonical URL |
+| `businessClass` | enum | `storefront\|restaurant\|medical\|retail\|salon\|gym\|auto-repair\|saas\|portfolio\|nonprofit\|legal\|organization` |
+| `email`, `phone`, `address`, `hours` | string | Contact info |
+
+### color.*
+
+```
+brandHue       0-360       Master OKLCH hue
+brandChroma    0.05-0.30   Saturation
+primary        color       oklch(0.62 {chroma} {hue})
+primaryHover   color       oklch(0.56 {chroma} {hue})
+accent         color       Independent highlight — typically complementary to hue
+accentHover    color
+background     color       oklch(0.08 0.02 {hue}) dark / oklch(0.99 0.005 {hue}) light
+surface        color       Cards / panels
+surfaceElevated color      Elevated panels
+border         color       Borders / dividers
+text           color       Primary text
+textMuted      color       Secondary text
+textSubtle     color       Tertiary text
+success        color       Green
+warning        color       Amber
+danger         color       Red
+info           color       Blue
+```
+
+### colorScheme
+
+`dark | light | auto`
+
+### font.*
+
+```
+heading      string       Display font (Google Font name)
+body         string       Body font
+mono         string       Mono font
+weights      number[]     Weights to load
+fluidScale   string       `clamp | step | fixed`
+```
+
+### features.*
+
+Boolean kill-switches. Read via `featureOn(key)` in code.
+
+```
+hero, bento, stats, services, process, testimonials,
+logoCloud, pricing, faq, blog, team, caseStudies,
+newsletter, cta
+```
+
+### Other top-level
+
+```
+radius.*        sm | md | lg | xl | 2xl | full
+spacing.*       0 1 2 3 4 6 8 12 16 24 32 (rem multiples of 0.25)
+shadow.*        sm | md | lg | glow
+motion.easing   cubic-bezier
+motion.duration fast | base | slow | scroll
+layout.*        containerWide | containerNormal | containerProse
+social.*        facebook | instagram | linkedin | twitter | youtube | tiktok | github
+```
+
+---
+
+## Route table (15 routes)
+
+| Path | File | Purpose | JSON-LD emitted |
+| --- | --- | --- | --- |
+| `/` | `pages/Home.tsx` | Compose hero + bento + stats + features + process + pricing + FAQ + CTA | Org + WebSite + WebPage + Breadcrumb + FAQPage |
+| `/about` | `pages/About.tsx` | Story + mission + stats | AboutPage |
+| `/services` | `pages/Services.tsx` | Service grid + CTA | Service |
+| `/pricing` | `pages/Pricing.tsx` | Tiers + comparison + FAQ + CTA | Product × tiers + FAQPage |
+| `/faq` | `pages/FAQ.tsx` | Grouped FAQs | FAQPage × N |
+| `/blog` | `pages/Blog.tsx` | Featured + grid | — |
+| `/blog/:slug` | `pages/BlogPost.tsx` | Article | BlogPosting |
+| `/team` | `pages/Team.tsx` | Member grid | Person[] |
+| `/case-studies` | `pages/CaseStudies.tsx` | Portfolio grid | — |
+| `/case-studies/:slug` | `pages/BlogPost.tsx` (reused) | Detail | BlogPosting |
+| `/contact` | `pages/Contact.tsx` | Form + NAP | ContactPage |
+| `/privacy` | `pages/Privacy.tsx` | Policy | — |
+| `/terms` | `pages/Terms.tsx` | Terms | — |
+| `/accessibility` | `pages/Accessibility.tsx` | WCAG statement | — |
+| `*` | `pages/NotFound.tsx` | 404 | — |
+
+---
+
+## Section component reference
+
+### HeroCenter
+
+Centered hero with cinematic backdrop + `KineticHeadline`.
+
+```ts
+{
+  eyebrow?: string;
+  headline: string;
+  subheadline?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  trustBadges?: { icon?: 'star'|'shield'|'award'; label: string }[];
+  className?: string;
+}
+```
+
+### HeroSplit
+
+Two-column hero: copy + image.
+
+```ts
+{ /* same as HeroCenter */ image: { src: string; alt: string }; imagePosition?: 'left'|'right' }
+```
+
+### KineticHeadline
+
+Scroll-driven variable-font headline.
+
+```ts
+{ text: string; eyebrow?: string; as?: 'h1'|'h2'|'h3'; className?: string }
+```
+
+### BentoGrid
+
+Asymmetric 12-col grid with subgrid alignment. First tile auto-promotes to hero cell.
+
+```ts
+{
+  tiles: { id: string; title: string; description?: string; icon?: ReactNode;
+           image?: string; imageAlt?: string; href?: string;
+           span?: 'sm'|'md'|'lg'|'xl'; tall?: boolean; accent?: boolean }[];
+  eyebrow?: string; headline?: string; description?: string;
+}
+```
+
+Span maps to desktop cols: `sm=4`, `md=6`, `lg=8`, `xl=12`. Mobile collapses to 1-col.
+
+### Stats
+
+Animated count-up rollup.
+
+```ts
+{ stats: { value: number; suffix?: string; label: string; caption?: string }[];
+  columns?: 2|3|4; eyebrow?: string; headline?: string }
+```
+
+### LogoCloud
+
+Logo strip — marquee or grid variant.
+
+```ts
+{ logos: { name: string; src?: string; href?: string }[];
+  variant?: 'marquee'|'grid'; eyebrow?: string; headline?: string }
+```
+
+### Marquee
+
+Generic infinite scroller. Reduced-motion-safe, hover-pausable.
+
+```ts
+{ items: ReactNode[]; speed?: 'slow'|'normal'|'fast'; reverse?: boolean; pauseOnHover?: boolean }
+```
+
+### ProcessSteps
+
+Numbered "how it works" cards.
+
+```ts
+{ steps: { title: string; description: string; icon?: ReactNode }[];
+  eyebrow?: string; headline?: string; description?: string }
+```
+
+### FeatureSplit
+
+Image-left or image-right copy block.
+
+```ts
+{ eyebrow?: string; headline: string; description: string;
+  bullets?: string[]; image?: { src: string; alt: string };
+  visual?: ReactNode; cta?: { label: string; href: string };
+  imagePosition?: 'left'|'right' }
+```
+
+### Pricing
+
+3-tier pricing with monthly/yearly toggle. Emits Product JSON-LD per tier.
+
+```ts
+{ tiers: PricingTier[]; eyebrow?: string; headline?: string;
+  description?: string; showToggle?: boolean }
+```
+
+`PricingTier`:
+
+```ts
+{ id: string; name: string; description: string;
+  monthly: number; yearly: number; currency?: string;
+  features: string[]; cta?: { label: string; href: string };
+  featured?: boolean; badge?: string }
+```
+
+### Comparison
+
+Feature comparison table.
+
+```ts
+{ columns: string[]; rows: ComparisonRow[];
+  highlightColumn?: number; eyebrow?: string; headline?: string }
+```
+
+Row values: `true | false | 'partial' | string`.
+
+### FAQ
+
+Disclosure widget. Emits FAQPage JSON-LD (highest AI-citation rate).
+
+```ts
+{ items: { question: string; answer: string }[];
+  exclusive?: boolean; eyebrow?: string; headline?: string; description?: string }
+```
+
+### CTASection
+
+Closer block.
+
+```ts
+{ headline: string; description?: string;
+  primary?: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  eyebrow?: string; tone?: 'emphatic'|'quiet' }
+```
+
+### TeamGrid
+
+Member cards. Emits Person JSON-LD per member.
+
+```ts
+{ members: { name: string; role: string; bio?: string;
+             photo?: string; links?: { label: string; href: string }[] }[];
+  eyebrow?: string; headline?: string; description?: string }
+```
+
+### BlogList
+
+Featured + grid posts. First post promotes to hero card.
+
+```ts
+{ posts: { slug: string; title: string; excerpt: string; date: string;
+           author?: string; category?: string; cover?: string; readMinutes?: number }[];
+  eyebrow?: string; headline?: string; basePath?: string }
+```
+
+### CaseStudyGrid
+
+Portfolio grid with up-to-3 metrics per study.
+
+```ts
+{ studies: { slug: string; title: string; client: string;
+             summary: string; industry?: string; cover?: string;
+             metrics?: { value: string; label: string }[] }[];
+  eyebrow?: string; headline?: string; basePath?: string }
+```
+
+---
+
+## Tailwind utility tokens
+
+Colors via Tailwind utilities, reading CSS vars:
+
+```
+bg-background        --color-background
+bg-surface           --color-surface
+bg-surface-elevated  --color-surface-elevated
+bg-primary           --color-primary
+bg-accent            --color-accent
+text-text            --color-text
+text-text-muted      --color-text-muted
+text-text-subtle     --color-text-subtle
+border-border        --color-border
+text-success         --color-success
+text-warning         --color-warning
+text-danger          --color-danger
+text-info            --color-info
+```
+
+Fonts: `font-heading`, `font-body`, `font-mono`.
+Fluid type: `text-fluid-xl` through `text-fluid-5xl`.
+Radii: `rounded-sm` through `rounded-2xl`.
+Easing: `ease-brand`.
+Duration: `duration-fast`, `duration-base`, `duration-slow`.
+Containers: `max-w-container-wide` (80rem), `max-w-container-normal` (64rem), `max-w-container-prose` (42rem).
+
+---
+
+## CSS utilities (custom, in src/index.css)
+
+| Class | Purpose |
+| --- | --- |
+| `.glass` | Translucent surface with backdrop-filter blur |
+| `.glass-strong` | Stronger glass variant |
+| `.card-tactile` | Sharp tactile-brutalism card |
+| `.grain` | Subtle film-grain overlay |
+| `.gradient-text` | Brand-gradient text fill |
+| `.underline-hover` | Animated underline on hover/focus |
+| `.interactive-4` | 4-state interactive transitions |
+| `.kinetic-headline` | Scroll-driven variable-font |
+| `.reveal-on-view` | Scroll-into-view reveal |
+| `.bento` | 12-col bento grid container |
+| `.bento-sm/.bento-md/.bento-lg/.bento-xl` | Tile span |
+| `.bento-tall` | Double row span |
+| `.marquee`, `.marquee__track` | Infinite scroller |
+| `.cmdk-overlay`, `.cmdk-panel`, `.cmdk-input`, `.cmdk-item`, `.cmdk-kbd` | Cmd+K palette |
+| `.cursor-ripple` | Click-ripple cursor effect |
+
+---
+
+## PWA manifest features
+
+- `display: standalone` with `display_override: ['window-controls-overlay', 'standalone', 'minimal-ui']`
+- `shortcuts[]` — Contact / Services / Pricing quick actions
+- `share_target` — handle shared text → contact form prefill
+- `screenshots[]` — wide + narrow form factors
+- Maskable + any-purpose icons at 16 / 32 / 180 / 192 / 512
+- `theme_color` + `background_color` from brand
+
+---
+
+## Robots.txt crawler policy
+
+Explicit Allow / Disallow per crawler:
+
+- ✅ GPTBot, ChatGPT-User, OAI-SearchBot (OpenAI)
+- ✅ ClaudeBot, Claude-User, Claude-SearchBot, anthropic-ai (Anthropic)
+- ✅ PerplexityBot, Perplexity-User (Perplexity)
+- ✅ Google-Extended (Gemini training)
+- ✅ Applebot-Extended (Apple AI training)
+- ✅ CCBot (Common Crawl)
+- ✅ FacebookBot (Meta Llama)
+- ❌ Bytespider, ImagesiftBot (aggressive scrapers)
+
+---
+
+## Speculation Rules
+
+Inline `<script type="speculationrules">` in `index.html` prerenders same-origin links on hover (Chrome 121+, `eagerness: moderate`).
+
+Add `data-no-prerender` to any link you don't want prerendered.
+
+---
+
+## View Transitions
+
+CSS `@view-transition { navigation: auto; }` provides cross-fade between routes (same-document SPA + cross-document MPA). Respects `prefers-reduced-motion`.
+
+---
+
+## Cmd+K palette behavior
+
+- ⌘K / Ctrl+K opens palette + focuses input on first frame (`requestAnimationFrame`)
+- Open + ⌘K re-focuses + selects existing query (toggle-friendly)
+- Esc closes + returns focus to trigger element
+- Arrow keys navigate, Enter activates, Home/End jump
+- Default actions: all 15 routes + theme toggle
+- Extensible via `<CommandPalette extra={[...]} />`
+
+---
+
+## Customization protocol (5 steps)
+
+1. Edit `_brand.json` — business + color + features
+2. Replace `{PLACEHOLDER}` in `src/pages/*.tsx` with real copy
+3. Update `index.html` title + meta + OG image URL
+4. Update `public/site.webmanifest`, `robots.txt`, `sitemap.xml`, `llms.txt`
+5. Run `npm install && npm run build`
+
+---
+
+## Quality bar
+
+- LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1
+- Lighthouse Perf ≥ 90, A11y ≥ 95, SEO ≥ 95
+- axe-core violations: 0
+- Console errors: 0
+- `{PLACEHOLDER}` strings in production: 0
+- JSON-LD blocks per page: ≥ 5
+- JS bundle (gzip): ≤ 250 KB per route
+
+---
+
+## Build verification
+
+```bash
+npm install
+npm run typecheck   # tsc -b --noEmit; 0 errors
+npm run build       # tsc -b && vite build; 0 errors
+npm run dev         # localhost:5173 returns HTTP 200
+```
+
+Current v3.0 state: 360 KB JS (106 KB gzip), 127 KB CSS (17 KB gzip), 0 TS errors, 1576 modules transformed.
+
+---
+
+## Industry presets (drop-in `_brand.json` variants)
+
+Located in `examples/`:
+
+- `_brand.saas.json` — indigo, dark, pricing + bento + logoCloud + blog
+- `_brand.restaurant.json` — amber, light, services + testimonials + FAQ
+- `_brand.portfolio.json` — violet, dark, caseStudies + team + process
+- `_brand.agency.json` — bold red, dark, caseStudies + team + logoCloud
+- `_brand.medical.json` — calming blue, light, services + FAQ + team
+- `_brand.legal.json` — navy serif, light, services + team + FAQ
+- `_brand.nonprofit.json` — hopeful green, light, stats + caseStudies + newsletter
+- `_brand.retail.json` — editorial rose, light, bento + newsletter + FAQ
+- `_brand.local-service.json` — dependable blue, light, services + stickyPhone + FAQ
+
+Switch preset:
+
+```bash
+cp examples/_brand.saas.json _brand.json
+```
+
+---
+
+## Stack rationale (full ADRs in docs/DECISIONS.md)
+
+- **Vite + React 18** — simplest deploy, WebContainer-compatible
+- **Tailwind 3** (not v4) — stable + widely-tooled; will migrate when v4 ecosystem catches up
+- **OKLCH** — perceptually uniform, Display P3 ready
+- **PhotoSwipe v5** — no containing-block bugs vs YARL
+- **Inline Cmd+K** — ~150 LOC vs adding cmdk dep
+- **Section composition** — flexibility > pre-baked page templates
+- **Feature flags in `_brand.json`** — colocated with brand identity
+- **W3C DTCG tokens** — industry standard, vendor-neutral
+- **AGENTS.md** — cross-IDE contract per Linux Foundation spec
+- **No SSR** — marketing sites work fine as SPAs; SEO covered by JSON-LD + Speculation Rules
+
+---
+
+## What this template does NOT do
+
+- ❌ SSR / RSC / ISR
+- ❌ Authentication (add Clerk / Auth.js downstream)
+- ❌ Database (add libsql / D1 / Supabase downstream)
+- ❌ Payments (link to Stripe Checkout)
+- ❌ CMS (content lives in TS files; swap for headless CMS downstream)
+- ❌ Email sending (Newsletter POSTs to /api/newsletter — implement backend)
+
+Each omission is an explicit decision. Don't shoehorn these in without an ADR.
+
+---
+
+## Repository
+
+- Repo: https://github.com/heymegabyte/template.projectsites.dev
+- License: Internal use for projectsites.dev / Megabyte Labs
+- Maintainer: Brian Zalewski · hey@megabyte.space
+- Powered by: projectsites.dev

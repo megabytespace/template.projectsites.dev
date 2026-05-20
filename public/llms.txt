@@ -24,6 +24,7 @@ Hours:    {BUSINESS_HOURS}
 - [Accessibility]({BUSINESS_URL}/accessibility)
 
 ## Machine-readable resources
+- [Full content index]({BUSINESS_URL}/llms-full.txt) — comprehensive manifest for AI agents
 - [Sitemap]({BUSINESS_URL}/sitemap.xml)
 - [Manifest]({BUSINESS_URL}/site.webmanifest)
 - [robots.txt]({BUSINESS_URL}/robots.txt)

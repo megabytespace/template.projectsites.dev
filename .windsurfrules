@@ -1,0 +1,12 @@
+# See AGENTS.md at the repo root for the full contract.
+# Windsurf reads both .windsurfrules and AGENTS.md. AGENTS.md is canonical.
+
+This is the projectsites-template — a Vite + React 18 + TypeScript + Tailwind cinematic website template.
+
+The brand-token system lives in `_brand.json` (W3C DTCG format). Edit only that file to rebrand. Tailwind utilities like `bg-accent`, `text-text-muted` resolve to CSS custom properties written by `src/brand.ts` at boot.
+
+Use components from `src/components/sections/*` to compose pages. Don't reinvent layouts.
+
+Press ⌘K to open the universal command palette. Don't remove that feature.
+
+Read AGENTS.md for the complete contract.

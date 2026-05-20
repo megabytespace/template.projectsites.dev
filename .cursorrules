@@ -1,0 +1,10 @@
+# See AGENTS.md at the repo root for the full contract.
+# This file is kept for legacy .cursorrules compatibility. New Cursor projects should rely on AGENTS.md and .cursor/rules/.
+
+You are working in a Vite + React 18 + TypeScript + Tailwind website template called projectsites-template (v3.0).
+
+The single source of truth for brand identity is `_brand.json` at the repo root. Edit it, then let `src/brand.ts` propagate CSS custom properties at boot. NEVER hardcode hex colors in components — use Tailwind tokens (bg-accent, text-text-muted, border-border).
+
+Compose pages from `src/components/sections/*` whenever possible. Add new sections only as a last resort. See `docs/COMPONENTS.md` for the catalog.
+
+Read AGENTS.md for the full contract before editing.
