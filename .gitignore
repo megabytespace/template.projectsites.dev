@@ -6,3 +6,5 @@ dist/
 .env.local
 .vite/
 .claude/settings.local.json
+tsconfig.tsbuildinfo
+*.tsbuildinfo
