@@ -2,6 +2,52 @@
 
 All notable changes to `projectsites-template` are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org).
 
+## [3.2.0] — 2026-05-20
+
+The prompt system. Master + 8 specialized + worked example.
+
+### Added
+
+#### Master prompt
+- `PROMPT.md` at repo root — canonical one-shot site-generation prompt
+- 7-step deterministic protocol: preset → hue/chroma → feature flags → business block → page copy → sanity check → verification report
+- Industry-specific add-ons (local business, SaaS, portfolio/agency, nonprofit, medical/legal)
+- Banned-word list, char/word-count constraints, worked example
+- Self-verification block the model must fill in before reporting done
+- Pinned to `projectsites-template@3.1.0`
+
+#### Specialized prompt library
+- `prompts/01-brand-from-description.md` — `_brand.json` only
+- `prompts/02-hero-copy.md` — hero section JSON
+- `prompts/03-faqs-from-description.md` — 6-10 FAQs ready for `<FAQ>` component
+- `prompts/04-local-jsonld.md` — full `LocalBusiness`-derived JSON-LD
+- `prompts/05-audit-slop.md` — banned-word + vague-claim audit
+- `prompts/06-migrate-from-url.md` — analyze URL → brand + section composition
+- `prompts/07-add-section.md` — propose / implement new section component
+- `prompts/08-audit-seo.md` — JSON-LD + meta + GEO coverage
+- `prompts/README.md` — prompt-library index
+
+#### Documentation
+- `docs/PROMPTS.md` — full prompt-system reference with invocation methods
+- AGENTS.md updated to reference master prompt at top of TL;DR
+- README.md updated with prompt callout
+- `.bolt/prompt` updated to point at the master + specialized prompts
+
+#### Worked example
+- `examples/applied/northern-lights-bakery/` — complete output of the master prompt on a real-feeling bakery brief:
+  - `_brand.json` (validated, zero warnings)
+  - `Home.tsx.snippet.tsx` (real copy, zero placeholders, zero banned words)
+  - `Contact.tsx.snippet.tsx` (NAP block + form)
+  - `local-jsonld.snippet.tsx` (Bakery schema with geo + aggregateRating + award)
+  - `VERIFICATION.md` (self-check report — every assumption documented)
+
+### Verification
+- Master prompt's output on the bakery brief passes:
+  - `npm run validate:brand` — 0 warnings
+  - `npm run typecheck` — 0 errors
+  - `npm run build` — 360KB JS / 106KB gzip, 1587 modules
+  - Vitest: 41/42 pass (the 1 failure is the placeholder-warning test correctly detecting NO placeholders — confirms prompt output is shipped-ready)
+
 ## [3.1.0] — 2026-05-20
 
 Validation, testing, CI, six new section components, scoped agent contracts.

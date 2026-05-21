@@ -3,6 +3,8 @@
 Production-ready cinematic website template for AI-generated sites on **projectsites.dev**. Built for **bolt.diy**, **bolt.new**, **Claude Code**, **Cursor**, and any other AI dev environment that can edit JSON + JSX.
 
 > One JSON file controls the brand. One hue number reskins the site. Fifteen routes ship ready.
+>
+> **One prompt customizes the whole thing.** See [`PROMPT.md`](./PROMPT.md) — paste it into Claude / GPT / Gemini with your business brief and get a complete site in one pass.
 
 ## Quick start
 

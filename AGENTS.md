@@ -7,10 +7,11 @@
 ## TL;DR (read in 60 seconds)
 
 1. **`_brand.json` is the only place that defines brand identity.** Edit it; do not edit hex colors elsewhere.
-2. **15 pages, 15 section components, dark/light/auto themes, ⌘K palette — all built in.** Compose; don't reinvent.
+2. **15 pages, 21 section components, dark/light/auto themes, ⌘K palette — all built in.** Compose; don't reinvent.
 3. **Tailwind tokens point at CSS variables.** Use `bg-accent`, `text-text-muted`, `border-border`. Never write `#0a0a1a`.
 4. **Every `{PLACEHOLDER}` string must be replaced before shipping.** Grep for `{` to find them all.
 5. **`npm install && npm run build` must pass before you mark work complete.**
+6. **For ANY non-trivial customization, start with the master prompt** at [`PROMPT.md`](./PROMPT.md). The 7-step deterministic protocol produces build-ready output in one pass.
 
 ## Project identity
 
@@ -182,6 +183,10 @@ Anything in this list = explicit project decision, not omission. Don't shoehorn 
 
 ## Where to dig deeper
 
+- `PROMPT.md` — **the master one-shot prompt.** Start here for any customization.
+- `prompts/` — eight specialized prompts (brand-only, hero copy, FAQs, local JSON-LD, slop audit, URL migration, new section, SEO audit)
+- `docs/PROMPTS.md` — full prompt-library reference
+- `examples/applied/` — worked examples showing complete output for real briefs
 - `CLAUDE.md` — architecture overview (mirrors this file's first half)
 - `README.md` — end-user-facing intro
 - `docs/ARCHITECTURE.md` — full deep dive into how everything fits

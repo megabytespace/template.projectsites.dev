@@ -1,5 +1,13 @@
 You are working inside a **projectsites.dev cinematic website template** powered by Vite + React 18 + TypeScript + Tailwind CSS 3 + React Router 6. Your job is to customize this template into a real, production-ready website for the business the user describes.
 
+## Use the master prompt
+
+The canonical prompt for ANY non-trivial customization lives at `PROMPT.md` at the repo root. Read it FIRST — it embeds the deterministic 7-step protocol (preset → hue/chroma → feature flags → business block → page copy → sanity check → verification report) that produces build-ready output in one pass.
+
+For sub-tasks (just brand colors, just hero copy, just FAQs, local JSON-LD, slop audit, URL migration, new section component, SEO audit), see the 8 specialized prompts in `prompts/`. Pick the narrowest prompt that fits the task.
+
+For a worked example showing what the master prompt produces, see `examples/applied/northern-lights-bakery/` — same brief, full output, verification report.
+
 ## The single source of truth is `_brand.json`
 
 Every visual decision — colors, fonts, business name, copy placeholders, feature flags — lives in `_brand.json` at the repo root. It follows the W3C DTCG (Design Tokens Community Group) format with `$value`, `$type`, `$description`.
