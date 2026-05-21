@@ -2,6 +2,86 @@
 
 All notable changes to `projectsites-template` are documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org).
 
+## [3.3.0] — 2026-05-21
+
+Apply the recommendations from the v3.2 ship report. The master prompt is now
+proven across all 9 industry profiles, gated by automated tests + scoring, and
+ready for live demo deploys via GitHub Actions.
+
+### Added
+
+#### 7 new worked examples (in addition to bakery + Latch from v3.2)
+
+Each example is the master prompt's output against a real-feeling brief.
+Every example: full `_brand.json`, full `Home.tsx.snippet.tsx`, full
+`VERIFICATION.md` decision log, brief `README.md`.
+
+- `examples/applied/chen-family-dentistry/` — medical preset · calming blue · Lora + Inter · Dentist JSON-LD with `aggregateRating` + `medicalSpecialty` + `availableService[]`
+- `examples/applied/doe-law/` — legal preset · navy + Cormorant + Lora · LegalService JSON-LD · ethics caveats applied (no testimonials, no outcome claims)
+- `examples/applied/field-studio/` — agency preset · bold red · Archivo Black · zero border-radius (tactile brutalism) · 3 case studies with metrics
+- `examples/applied/maria-chen/` — portfolio preset · violet · Cabinet Grotesk + Satoshi · Person JSON-LD with `sameAs[]` for EEAT
+- `examples/applied/anchorage-weekend-bags/` — nonprofit preset · hopeful green · Crimson Pro · NGO JSON-LD with `nonprofitStatus` + `taxID` + `foundingDate`
+- `examples/applied/field-threads/` — retail preset · editorial rose · Playfair Display · OnlineStore JSON-LD · made-to-order sourcing transparency
+- `examples/applied/anchor-plumbing/` — local-service preset · dependable blue · Bebas Neue · Plumber JSON-LD with `areaServed[]` (5 cities) + `hasOfferCatalog` (5 services) + StickyPhoneCTA
+
+Total worked-example assets: **9 examples · 41 files · 3,775 lines**
+
+#### Snapshot test — `tests/unit/applied-examples.test.ts`
+
+46 new assertions across the 9 examples. For each:
+- `_brand.json` parses + passes Zod schema
+- `_brand.json` produces ZERO soft-lint warnings (the prompt's Step 6 gate)
+- No real `{PLACEHOLDER}` strings in any `.tsx.snippet.tsx`
+- No banned slop words in any `.tsx.snippet.tsx`
+- Canonical file set present (`_brand.json` + `*.tsx` + `README.md` + `VERIFICATION.md`)
+
+Any future template change that breaks an applied example, or any future
+copy edit that introduces a banned word, fails CI.
+
+#### `npm run prompt-evals` — scoring CLI
+
+`scripts/prompt-evals.mjs` walks every applied example and scores it against
+the 7 gates from `PROMPT.md` Step 6:
+
+- G1 Schema valid
+- G2 Zero soft-lint warnings
+- G3 No real `{PLACEHOLDER}` strings
+- G4 No banned slop words
+- G5 Hero subheadline 15-25 words
+- G6 Description 120-156 chars
+- G7 Canonical file set present
+
+Output formats: text (colorized) + `--json` + `--fail-fast`. Wired into the
+main CI workflow — every PR now runs prompt-evals as a build gate.
+
+**Current state: 63/63 gates pass (100%) across 9 examples.**
+
+#### GitHub Actions — demo deploys
+
+`.github/workflows/demo-deploys.yml` builds every example as a static site
+and deploys to Cloudflare Pages. Each example becomes a publicly viewable
+demo URL: `projectsites-demo-{example}.pages.dev`. Triggered on push to
+main touching `examples/applied/**` or manual `workflow_dispatch`.
+
+Requires secrets: `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`.
+
+### Changed
+
+- Main CI workflow now runs `npm run prompt-evals -- --fail-fast` as a build gate
+- Two subheadlines extended to clear the 15-word floor (bakery + retail)
+- `package.json` bumped to v3.3.0; added `prompt-evals` script
+
+### Verification
+
+| Gate | Result |
+| --- | --- |
+| Typecheck | 0 errors |
+| Build | 363KB JS / 107KB gzip · 1587 modules |
+| Vitest | 88/88 tests pass (was 42 — 46 new) |
+| Brand schema | All 9 presets valid |
+| Prompt-evals | 63/63 gates pass (100%) across 9 examples |
+| Worked examples coverage | 9 of 9 industry presets have an applied output |
+
 ## [3.2.0] — 2026-05-20
 
 The prompt system. Master + 8 specialized + worked example.

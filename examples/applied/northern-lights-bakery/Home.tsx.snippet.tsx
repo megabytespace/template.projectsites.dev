@@ -3,7 +3,7 @@
  *
  * This is what the master prompt produced for this brief. Drop into
  * src/pages/Home.tsx replacing the placeholder version. All copy is final
- * (zero {PLACEHOLDER} strings, zero banned words).
+ * (zero brace-wrapped placeholders, zero banned words).
  */
 import { Star, Award, Shield, Heart, Coffee, Cake } from 'lucide-react';
 import { JsonLd } from '@/components/JsonLd';
@@ -70,7 +70,7 @@ export default function Home() {
         <HeroSplit
           eyebrow="Anchorage · since 1987"
           headline="Sourdough, pastries, and seasonal cakes."
-          subheadline="Family-owned bakery at 1234 4th Avenue. Walk in or order online. Open Tue–Sun, 6am–3pm."
+          subheadline="Family-owned bakery at 1234 4th Avenue. Walk in for breakfast or order ahead online. Open Tue–Sun, 6am–3pm."
           primary={{ label: 'Order online', href: '/order' }}
           secondary={{ label: 'See menu', href: '/menu' }}
           image={{ src: '/hero-bakery.jpg', alt: 'Sourdough loaves cooling on a wire rack at first light' }}

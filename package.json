@@ -1,7 +1,7 @@
 {
   "name": "projectsites-template",
   "private": true,
-  "version": "3.2.0",
+  "version": "3.3.0",
   "type": "module",
   "description": "Cinematic React + Vite + Tailwind website template with DTCG brand tokens, 15 universal routes, kinetic typography, bento grid, command palette, full PWA kit, Zod-validated brand schema, Vitest + Playwright tests. Built for AI customization (bolt.diy, Claude, Cursor).",
   "scripts": {
@@ -19,7 +19,8 @@
     "e2e:install": "playwright install --with-deps",
     "validate:brand": "node scripts/validate-brand.mjs",
     "brand:swap": "node scripts/swap-brand.mjs",
-    "og": "node scripts/og-image.mjs"
+    "og": "node scripts/og-image.mjs",
+    "prompt-evals": "node scripts/prompt-evals.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",

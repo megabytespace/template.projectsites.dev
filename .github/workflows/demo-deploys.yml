@@ -1,0 +1,124 @@
+name: Demo Deploys
+
+# Build every worked example in examples/applied/ as a static site and deploy
+# to Cloudflare Pages as a separate project per example. Each example becomes
+# a publicly viewable demo URL.
+#
+# Required secrets (set in GitHub repo → Settings → Secrets and variables):
+#   CLOUDFLARE_API_TOKEN         token with Pages:Edit + Account:Read scopes
+#   CLOUDFLARE_ACCOUNT_ID        Cloudflare account ID
+#
+# Optional:
+#   PAGES_PROJECT_PREFIX         project name prefix (default: "projectsites-demo")
+#
+# Triggers:
+#   - Push to main that touches examples/applied/**
+#   - Manual workflow_dispatch
+#
+# Each example produces: `${PREFIX}-${exampleDir}.pages.dev`
+# (e.g. `projectsites-demo-latch.pages.dev`)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'examples/applied/**'
+      - '.github/workflows/demo-deploys.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: demo-deploys-${{ github.ref }}
+  cancel-in-progress: false   # let multi-example pushes finish all deploys
+
+env:
+  NODE_VERSION: '22'
+  PAGES_PROJECT_PREFIX: 'projectsites-demo'
+
+jobs:
+  enumerate:
+    name: List applied examples
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.list.outputs.examples }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        name: Find directories under examples/applied/
+        run: |
+          examples=$(ls -d examples/applied/*/ 2>/dev/null | xargs -n1 basename | jq -R . | jq -sc .)
+          echo "examples=$examples" >> $GITHUB_OUTPUT
+          echo "Found examples: $examples"
+
+  deploy:
+    name: Deploy ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    needs: enumerate
+    if: ${{ needs.enumerate.outputs.examples != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        example: ${{ fromJson(needs.enumerate.outputs.examples) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Swap brand to ${{ matrix.example }}
+        run: |
+          cp examples/applied/${{ matrix.example }}/_brand.json _brand.json
+          echo "→ Active brand:"
+          jq '.business.name.$value, .business.tagline.$value' _brand.json
+
+      - name: Validate swapped brand
+        run: npm run validate:brand
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Determine Pages project name
+        id: project
+        run: |
+          # Cloudflare Pages project names: lowercase, hyphens only, max 58 chars
+          PROJECT="${{ env.PAGES_PROJECT_PREFIX }}-${{ matrix.example }}"
+          PROJECT=$(echo "$PROJECT" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9-' '-' | sed 's/-\+/-/g' | sed 's/^-\|-$//g' | cut -c1-58)
+          echo "name=$PROJECT" >> $GITHUB_OUTPUT
+          echo "Project: $PROJECT"
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ steps.project.outputs.name }} --branch=main --commit-dirty=true
+
+      - name: Annotate deploy URL
+        run: |
+          echo "### ${{ matrix.example }} deploy" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🚀 https://${{ steps.project.outputs.name }}.pages.dev" >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: [enumerate, deploy]
+    if: always()
+    steps:
+      - name: Build summary
+        run: |
+          echo "### Demo deploys" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Live URLs:" >> $GITHUB_STEP_SUMMARY
+          for example in $(echo '${{ needs.enumerate.outputs.examples }}' | jq -r '.[]'); do
+            PROJECT="${{ env.PAGES_PROJECT_PREFIX }}-${example}"
+            PROJECT=$(echo "$PROJECT" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9-' '-' | sed 's/-\+/-/g' | sed 's/^-\|-$//g' | cut -c1-58)
+            echo "- **${example}**: https://${PROJECT}.pages.dev" >> $GITHUB_STEP_SUMMARY
+          done

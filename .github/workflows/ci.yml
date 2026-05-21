@@ -33,6 +33,8 @@ jobs:
             echo "→ Validating $f"
             node scripts/validate-brand.mjs "$f"
           done
+      - name: Score every applied example (prompt-evals)
+        run: npm run prompt-evals -- --fail-fast
 
   typecheck:
     name: Typecheck
